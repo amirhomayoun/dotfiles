@@ -1,0 +1,218 @@
+!-------------------------------------------------------------------------------
+! Xft settings
+!-------------------------------------------------------------------------------
+ 
+Xft.dpi:                    96
+Xft.antialias:              false
+Xft.rgba:                   rgb
+Xft.hinting:                true
+Xft.hintstyle:              hintslight
+ 
+!-------------------------------------------------------------------------------
+! URxvt settings
+! Colours lifted from Solarized (http://ethanschoonover.com/solarized)
+! More info at:
+! http://pod.tst.eu/http://cvs.schmorp.de/rxvt-unicode/doc/rxvt.1.pod
+!-------------------------------------------------------------------------------
+ 
+URxvt.depth:                32
+URxvt.geometry:             90x30
+URxvt.transparent:          false
+URxvt.fading:               0
+URxvt.urgentOnBell:         true
+URxvt.visualBell:           true
+URxvt.loginShell:           true
+URxvt.saveLines:            12000
+URxvt.internalBorder:       3
+URxvt.lineSpace:            0
+ 
+! Fonts
+URxvt.allow_bold:           false
+/* URxvt.font:                 -*-terminus-medium-r-normal-*-12-120-72-72-c-60-iso8859-1 */
+URxvt*font: xft:Monospace:pixelsize=14
+URxvt*boldFont: xft:Monospace:pixelsize=14
+ 
+! Fix font space
+URxvt*letterSpace: -1
+ 
+! Scrollbar
+!URxvt.scrollStyle:          rxvt
+URxvt.scrollstyle:          plain
+URxvt.scrollBar:            true 
+Urxvt.secondaryScroll:      true
+URxvt.scrollBar_floating:   true
+URxvt.scrollColor:          #252525
+URxvt*scrollTtyOutput:      true
+URxvt*scrollWithBuffer:     true
+URxvt*scrollTtyKeypress:    true
+
+!Buffer size
+URxvt*saveLines:10000
+
+! Tab
+!URxvt.perl-ext-common:  default,tabbed
+
+URxvt.tabbed.tabbar-fg: 2
+URxvt.tabbed.tabbar-bg: 0
+URxvt.tabbed.tab-fg:    3
+URxvt.tabbed.tab-bg:    0
+
+! Bell
+
+URxvt.urgentOnBell: true
+
+
+! Perl extensions
+URxvt.perl-ext-common:      default,tabbed
+URxvt.matcher.button:       1
+URxvt.urlLauncher:          firefox
+ 
+! Cursor
+URxvt.cursorBlink:          true
+URxvt.cursorColor:          #657b83
+URxvt.cursorUnderline:      false
+ 
+! Pointer
+URxvt.pointerBlank:         true
+
+! Fix slow refresh rate
+URxvt*buffered: false
+
+
+!!Source http://github.com/altercation/solarized
+ 
+!*background: #002b36
+*background: #191919
+*foreground: #657b83
+!!*fading: 40
+*fadeColor: #002b36
+*cursorColor: #93a1a1
+*pointerColorBackground: #586e75
+*pointerColorForeground: #93a1a1
+! 
+!!! black dark/light
+!*color0: #073642
+!*color8: #002b36
+! 
+!!! red dark/light
+!*color1: #dc322f
+!*color9: #cb4b16
+! 
+!!! green dark/light
+!*color2: #859900
+!*color10: #586e75
+! 
+!!! yellow dark/light
+!*color3: #b58900
+!*color11: #657b83
+! 
+!! blue dark/light
+!*color4: #268bd2
+!*color12: #839496
+! 
+!!! magenta dark/light
+!*color5: #d33682
+!*color13: #6c71c4
+! 
+!!! cyan dark/light
+!*color6: #2aa198
+!*color14: #93a1a1
+! 
+!!! white dark/light
+!*color7: #eee8d5
+!*color15: #fdf6e3
+
+! New SET
+
+! black
+URxvt.color0  : #000000
+URxvt.color8  : #555555
+! red
+URxvt.color1  : #AA0000
+URxvt.color9  : #FF5555
+! green
+URxvt.color2  : #00AA00
+URxvt.color10 : #55FF55
+! yellow
+URxvt.color3  : #AA5500
+URxvt.color11 : #FFFF55
+! blue
+!URxvt.color4  : #0000AA
+URxvt.color4  : #5555FF
+URxvt.color12 : #5555FF
+! magenta
+Rxvt.color5  : #AA00AA
+URxvt.color13 : #FF55FF
+! cyan
+URxvt.color6  : #00AAAA
+URxvt.color14 : #55FFFF
+! white
+URxvt.color7  : #AAAAAA
+URxvt.color15 : #FFFFFF
+!
+!! NEW SET
+!!colors:
+!!scheme: pnevma
+!!*foreground: #696969
+!!*background: #282626
+!*foreground: #6F6767
+!*background: #3A3636
+!*color0: #363636
+!*color8: #424242
+!*color1: #C37561
+!*color9: #D19485
+!*color2: #A0A57E
+!*color10: #B6B99D
+!*color3: #D1A375
+!*color11: #DEBC9C
+!*color4: #7985A3
+!*color12: #98A1B9
+!*color5: #AB716D
+!*color13: #BE918E
+!*color6: #98B9B1
+!*color14: #CBE6CB
+!*color7: #D0D0D0
+!*color15: #E6E6E6
+
+! NEW SET
+!
+!URxvt.foreground: #CCCCCC
+!URxvt.background: #4B5D7E
+!
+!! Normal
+!! color0    black
+!! color1    red
+!! color2    green
+!! color3    yellow
+!! color4    blue
+!! color5    purple
+!! color6    cyan
+!! color7    white
+!
+!urxvt.color0:    #6c6c6c
+!urxvt.color1:    #e9897c
+!urxvt.color2:    #b6e77d
+!urxvt.color3:    #ecebbe
+!urxvt.color4:    #a9cdeb
+!urxvt.color5:    #ea96eb
+!urxvt.color6:    #c9caec
+!urxvt.color7:    #CCCCCC
+!
+!! Light
+!! color8     black
+!! color9     red
+!! color10    green
+!! color11    yellow
+!! color12    blue
+!! color13    purple
+!! color14    cyan
+!! color15    white
+!
+!urxvt.color8:    #747474
+!urxvt.color9:    #f99286
+!urxvt.color10:    #c3f786
+!urxvt.color11:    #fcfbcc
+!urxvt.color12:    #b6defb
+!urxvt.color13:    #fba1fb
+!urxvt.color14:    #d7d9fc
+!urxvt.color15:    #e2e2e2

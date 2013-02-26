@@ -1,0 +1,55 @@
+#!/bin/bash
+
+xrdb -merge .Xresources
+
+#trayer --edge top --align right --SetDockType true --SetPartialStrut true --expand true --width 10 --height 15 --transparent true --tint 0x000000 &
+
+#gnome-screensaver
+
+#gnome-settings-daemon
+
+#if [ -x /usr/bin/gnome-power-manager ] ; then
+#   sleep 1
+#   gnome-power-manager
+#fi
+
+#nm-applet in tray
+if [ -x /usr/bin/nm-applet ] ; then
+   nm-applet --sm-disable &
+fi
+
+# volume indicator in tray
+#if [ -x /usr/bin/gnome-sound-applet ] ; then
+#  gnome-sound-applet &
+#fi
+
+xscreensaver -no-splash &
+
+eval $(gnome-keyring-daemon --start)
+export GNOME_KEYRING_SOCKET
+export GNOME_KEYRING_PID
+
+#kmix --keepvisibility
+#emacs &
+#xterm &
+#firefox &
+unclutter &
+
+#most basic xmodmap stuff
+xmodmap -e 'remove Lock = Caps_Lock'
+xmodmap -e 'keysym Caps_Lock = Control_L'
+xmodmap -e 'add Control = Control_L'
+xmodmap -e 'keycode 166 = Hyper_R'
+xmodmap -e 'add mod5 = Hyper_R'
+
+trayer --edge top --align right --SetDockType true --SetPartialStrut true --expand true --width 10 --height 21 --transparent true --alpha 0 --tint 0x000000 &
+
+
+kill dmenu
+dmenu -i
+feh --bg-scale /home/homayoun/Pictures/vim-shortcuts.png &
+(sleep 2 && pnmixer&) 
+#everpad
+#clipit
+#exec ~/.xmonadrc
+exec xmonad

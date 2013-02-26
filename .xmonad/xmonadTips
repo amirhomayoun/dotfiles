@@ -1,0 +1,42 @@
+in:
+vim /usr/share/xsessions/xmonad.desktop
+
+add:
+Exec=/home/homayoun/.xmonad/xmonad.start
+
+
+
+
+Look in:
+
+/usr/include/X11/XF86keysym.h
+
+#define XF86XK_Standby          0x1008FF10   /* System into standby mode   */
+#define XF86XK_AudioLowerVolume 0x1008FF11   /* Volume control down        */
+#define XF86XK_AudioMute        0x1008FF12   /* Mute sound from the system */
+#define XF86XK_AudioRaiseVolume 0x1008FF13   /* Volume control up          */
+#define XF86XK_AudioPlay        0x1008FF14   /* Start playing of audio >   */
+#define XF86XK_AudioStop        0x1008FF15   /* Stop playing audio         */
+#define XF86XK_AudioPrev        0x1008FF16   /* Previous track             */
+#define XF86XK_AudioNext        0x1008FF17   /* Next track                 */
+#define XF86XK_HomePage         0x1008FF18   /* Display user's home page   */
+#define XF86XK_Mail             0x1008FF19   /* Invoke user's mail program */
+#define XF86XK_Start            0x1008FF1A   /* Start application          */
+#define XF86XK_Search           0x1008FF1B   /* Search                     */
+#define XF86XK_AudioRecord      0x1008FF1C   /* Record audio application   */
+
+/* These are sometimes found on PDA's (e.g. Palm, PocketPC or elsewhere)   */
+#define XF86XK_Calculator       0x1008FF1D   /* Invoke calculator program  */
+#define XF86XK_Memo             0x1008FF1E   /* Invoke Memo taking program */
+#define XF86XK_ToDoList         0x1008FF1F   /* Invoke To Do List program  */
+
+
+Add the key to .xmonad.hs:
+
+        , ((0  , 0x1008FF11), spawn "amixer -q set Master 5%- unmute") --Control volume 
+        , ((0  , 0x1008FF13), spawn "amixer -q set Master 5%+ unmute") --Control volume 
+        , ((0  , 0x1008FF12), spawn "amixer -q set Master mute") --Control volume 
+
+
+
+

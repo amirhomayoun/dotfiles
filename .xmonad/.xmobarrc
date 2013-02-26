@@ -1,0 +1,22 @@
+Config { font ="xft:Pragmata:pixelsize=13:antialias=true:hinting=true"  
+-- font = "-*-Fixed-Bold-R-Normal-*-13-*-*-*-*-*-*-*" 
+       , bgColor = "black"
+       , fgColor = "grey"
+       , position = TopW L 90
+       , lowerOnStart = False 
+       , commands = [ Run Weather "KALB" ["-t"," <tempF>F","-L","64","-H","77","--normal","green","--high","red","--low","lightblue"] 36000
+                    , Run Cpu ["-L","3","-H","50","--normal","green","--high","red"] 10
+                    , Run Memory ["-t","Mem: <usedratio>%"] 10
+		    , Run Com "/home/homayoun/.xmonad/getcoretemp.sh" ["-t", "C C", "-L", "40", "-H", "60", "--low", "lightblue", "--normal", "white", "--high", "red"] "coreTemp" 10
+--		    , Run CoreTemp ["-t", "C C", "-L", "40", "-H", "60", "-l", "lightblue", "-n", "white", "-h", "red"] 50
+                    , Run Swap [] 10
+                    , Run Date "%a %b %_d %l:%M" "date" 10
+                    , Run Com "/home/homayoun/.xmonad/Volume.sh "  []  "volume" 100
+		    , Run Network "eth1" ["-L","1","-H","50","--normal","lightblue","--high","lightgreen","-t","Net: <rx> KBS"] 10
+                    , Run StdinReader
+--		    , Run MPD
+                    ]
+       , sepChar = "%"
+       , alignSep = "}{"
+       , template = "%StdinReader% }{ %cpu% * %coreTemp%| %memory% * %swap% * %eth1% * %volume%  <fc=#ee9a00>%date%</fc> | %KALB%"  
+       }

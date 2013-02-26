@@ -1,0 +1,261 @@
+import XMonad
+import XMonad.Layout.ResizableTile -- (5)  resize non-master windows too
+import XMonad.Layout.PerWorkspace  
+import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.ManageDocks
+import XMonad.Util.Run(spawnPipe)
+import XMonad.Util.EZConfig(additionalKeys)
+import System.IO
+import XMonad.Actions.SpawnOn
+import XMonad.Actions.CycleWS
+import XMonad.Actions.GridSelect
+import XMonad.Hooks.EwmhDesktops
+import XMonad.Prompt
+import XMonad.Prompt.Window
+import XMonad.Hooks.UrgencyHook
+import XMonad.Hooks.SetWMName  -- for ImageJ and other java softwares
+import XMonad.Hooks.EwmhDesktops
+
+import XMonad.Util.Loggers
+import XMonad.Actions.Commands
+import XMonad.Actions.FocusNth
+import XMonad.Actions.NoBorders
+import System.Exit
+import qualified XMonad.StackSet as W
+import qualified Data.Map        as M
+
+import XMonad.Prompt
+import XMonad.Prompt.Shell
+import XMonad.Prompt.Input
+
+import XMonad.Util.EZConfig
+
+import XMonad.Layout.ResizableTile
+import XMonad.Layout.NoBorders
+import XMonad.Layout.Magnifier
+import XMonad.Layout.WindowNavigation
+--import XMonad.Layout.HintedTile
+import XMonad.Layout.ToggleLayouts
+
+import XMonad.Layout.SimpleDecoration
+import XMonad.Layout.TabBarDecoration
+import XMonad.Layout.Tabbed
+import XMonad.Layout.Simplest
+import XMonad.Hooks.SetWMName --hack to fix broken sun java
+import XMonad.Layout.Gaps
+import XMonad.Hooks.FadeInactive
+import XMonad.Layout.Circle
+
+
+
+myManageHook = composeAll
+    [ className =? "Gimp"      --> doFloat
+    , className =? "evince" --> doShift "test"
+    , className =? "Vncviewer" --> doFloat
+    , className =? "Obmixer" --> doFloat
+    , className =? "pnmixer" --> doFloat
+
+    ]
+
+--myLayout = avoidStruts  $  layoutHook defaultConfig 
+
+myLayout = myLayoutModifiers (tiled ||| Mirror tiled ||| Full ||| simpleTabbed) 
+
+	where
+
+	--myLayoutModifiers = (renamed [CutWordsLeft 2] . smartBorders . minimize . avoidStruts . (imageButtonDeco shrinkText myDecoTheme)) 
+	myLayoutModifiers = avoidStruts
+	
+	-- default tiling algorithm partitions the screen into two panes
+        tiled   = Tall nmaster delta ratio
+
+         -- The default number of windows in the master pane
+        nmaster = 1
+
+         -- Default proportion of screen occupied by master pane
+        ratio   = 1/2
+
+           -- Percent of screen to increment by when resizing panes
+        delta   = 3/100
+
+--myLayout = gaps [(D,23)] $ toggleLayouts (noBorders Full) $ configurableNavigation (navigateColor myInactiveBorderColor) $ (HintedTile 1 0.01 0.5 TopLeft XMonad.Layout.HintedTile.Tall  ||| magnifier ( HintedTile 1 0.01 0.5 TopLeft XMonad.Layout.HintedTile.Tall) ||| tabBar shrinkText myDecoTheme Top (gaps [(U,17)] $ noBorders Simplest) )
+
+	--where
+	myDecoTheme = defaultTheme
+                    { activeColor = myActiveTitleBackgroudColor
+                    , inactiveColor = myInactiveBackgroundColor
+                    , urgentColor = myUrgentBackgroudColor
+                    , activeTextColor = myActiveTitleForgroudColor
+--                    , activeTextColor = myInactiveForgroudColor
+                    , inactiveTextColor = myInactiveForgroudColor
+                    , urgentTextColor = myUrgentForgroudColor
+                    , activeBorderColor = myActiveTitleBorderColor
+                    , inactiveBorderColor = myInactiveBackgroundColor
+                    , urgentBorderColor = myUrgentBorderColor
+                    , fontName = "-bitstream-bitstream vera sans-medium-r-*-*-14-*-*-*-*-*-*-*"
+                    , decoWidth = 1400
+                    , decoHeight = 17
+                    }
+
+
+myWorkspaces = ["1☀","2☻","3✖","4◑","5❀","6☂","7♫","8☎","9◕"]  
+
+defaultTheme :: Theme
+defaultTheme =
+    Theme { activeColor         = "#999999"
+          , inactiveColor       = "#666666"
+          , urgentColor         = "#FFFF00"
+          , activeBorderColor   = "#FFFFFF"
+          , inactiveBorderColor = "#BBBBBB"
+          , urgentBorderColor   = "##00FF00"
+          , activeTextColor     = "#FFFFFF"
+          , inactiveTextColor   = "#BFBFBF"
+          , urgentTextColor     = "#FF0000"
+          , fontName            = "-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*"
+          , decoWidth           = 200
+          , decoHeight          = 20
+          , windowTitleAddons   = []
+          , windowTitleIcons    = []
+          }
+
+
+
+-- Color setup
+--
+myActiveForgroudColor = "#000000"
+myActiveBackgroudColor = "#ffffff"
+myActiveBorderColor = "#1b87cb"
+--myActiveBorderColor = "#ffffff"
+--myActiveBorderColor = "#000000"
+
+myActiveTitleForgroudColor = "#ffffff"
+--myActiveTitleForgroudColor = "#000000"
+--myActiveTitleForgroudColor = "#1b87cb"
+--myActiveTitleBackgroudColor = "#1b87cb"
+--myActiveTitleBackgroudColor = "#ffffff"
+myActiveTitleBackgroudColor = "#000000"
+--myActiveTitleBorderColor = "#1b87cb"
+--myActiveTitleBorderColor = "#ffffff"
+myActiveTitleBorderColor = "#000000"
+
+myInactiveForgroudColor = "#aaaaaa"
+myInactiveBackgroundColor = "#000000"
+myInactiveBorderColor = "#000000"
+
+myUrgentForgroudColor = "#ff0000"
+myUrgentBackgroudColor = "#111111"
+myUrgentBorderColor = "#ff0000"
+
+myFocusedBorderColor = "#00FF00"
+
+myPromptTheme = defaultXPConfig
+                    { font = "-bitstream-bitstream vera sans-medium-r-*-*-14-*-*-*-*-*-*-*"
+                    , bgColor = myActiveTitleBackgroudColor
+                    , fgColor = myActiveTitleForgroudColor
+		    , fgHLight = myActiveForgroudColor
+		    , bgHLight = myActiveBackgroudColor
+		    , borderColor = myActiveTitleBackgroudColor
+		    , position = Top
+		    , defaultText = " "
+		    , autoComplete = Just 1
+                    }
+
+
+main = do
+    xmproc <- spawnPipe "/usr/bin/xmobar -x 0 /home/homayoun/.xmonad/.xmobarrc"
+    xmproc2 <- spawnPipe "/usr/bin/xmobar -x 1 /home/homayoun/.xmonad/.xmobarrc2"
+--    xmproc3 <- spawnPipe "killall trayer"
+--    xmproc4 <- spawnPipe "/home/homayoun/.xmonad/trayer.sh"
+    xmproci5 <- spawnPipe "killall everpad; everpad"
+    xmproci6 <- spawnPipe "killall clipit; clipit"
+    xmproci7 <- spawnPipe "guake"
+    xmonad $  ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
+        { manageHook = manageDocks <+> myManageHook -- make sure to include myManageHook definition from above
+                        <+> manageHook defaultConfig
+        , layoutHook = myLayout
+        ,  startupHook =ewmhDesktopsStartup >> setWMName "LG3D"
+--          spawnOn  "8" "evince"
+--          spawnOn "test" "evince"
+--      , startupHook = myStartUpHook
+        , logHook = dynamicLogWithPP xmobarPP
+                        { ppOutput = hPutStrLn xmproc
+                        , ppTitle = xmobarColor "green" "" . shorten 50
+			, ppUrgent = xmobarColor "red" ""  . shorten 30
+                        }
+		  >> dynamicLogWithPP xmobarPP
+                        { ppOutput = hPutStrLn xmproc2
+                        , ppTitle = xmobarColor "green" "" . shorten 50
+			, ppUrgent = xmobarColor "red" ""  . shorten 50
+                        }
+--	, setWMName "LG3D"
+	, terminal= "urxvt"
+        , modMask = mod4Mask     -- Rebind Mod to the Windows key
+	, focusedBorderColor = myFocusedBorderColor
+        , handleEventHook    = fullscreenEventHook
+	, workspaces = myWorkspaces
+        } `additionalKeys`
+        [ ((mod4Mask .|. shiftMask, xK_z), spawn "xscreensaver-command -lock")
+        , ((mod4Mask .|. shiftMask, xK_F4), spawn "xscreensaver-command -lock; sleep 1; xset dpms force standby")
+        , ((controlMask, xK_Print), spawn "sleep 0.2; scrot -s")
+        , ((0, xK_Print), spawn "scrot")
+--      , ((mod4Mask.|. shiftMask,xK_z),    spawn "gnome-screensaver-command -l")
+--	, ((mod4Mask.|. shiftMask,xK_F4),    spawn "gnome-screensaver-command -l && sleep 1 && xset dpms force off")
+
+        , ((mod4Mask,               xK_a), sendMessage MirrorShrink)
+        , ((mod4Mask,               xK_z), sendMessage MirrorExpand)
+        
+        , (( mod4Mask, xK_c), spawn "google-chrome") -- to open Google chrome 
+--        , (( mod4Mask .|. shiftMask, xK_F4), spawn "sudo shutdown -h now") -- window key + Shift + F4 to shutdown system  
+        , (( mod4Mask, xK_F4), kill) -- to kill applications  
+        , ((0  , 0x1008FF11), spawn "amixer -q set Master 5%- unmute") --Control volume 
+        , ((0  , 0x1008FF13), spawn "amixer -q set Master 5%+ unmute") --Control volume 
+        , ((0  , 0x1008FF12), spawn "amixer -q set Master toggle") --Control volume 
+        , ((0  , 0x1008FF14), spawn " mocp --toggle-pause") --
+        , ((0  , 0x1008FF15), spawn " mocp --stop") --
+        , ((0  , 0x1008FF16), spawn " mocp --previous") --
+        , ((0  , 0x1008FF17), spawn " mocp --next") --
+
+	, ((0, xK_Print), spawn "scrot") -- use the print key to capture screenshot with scrot  
+--      , ((mod4Mask,               xK_Down),  nextWS)
+--	, ((mod4Mask,               xK_Up),    prevWS)
+--	, ((mod4Mask .|. shiftMask, xK_Down),  shiftToNext)
+--	, ((mod4Mask .|. shiftMask, xK_Up),    shiftToPrev)
+	, ((mod4Mask,               xK_Right), nextScreen)
+	, ((mod4Mask,               xK_Left),  prevScreen)
+	, ((mod4Mask .|. shiftMask, xK_Right), shiftNextScreen)
+	, ((mod4Mask .|. shiftMask, xK_Left), shiftPrevScreen)
+	, ((mod4Mask,               xK_z),     toggleWS)
+        , ((mod4Mask     , xK_f), moveTo Next EmptyWS)  -- find a free workspace
+        , ((mod4Mask .|. shiftMask, xK_f), shiftTo Next EmptyWS)  -- shift to the next free workspace
+--        , ((mod4Mask, xK_g), goToSelected defaultGSConfig)
+        , ((mod4Mask, xK_s), spawnSelected defaultGSConfig ["xterm","gmplayer","gvim"])
+        , ((mod4Mask, xK_a), spawn "/home/homayoun/.xmonad/ChooseWindow.sh" ) -- use mod4Mask + a to see all the windows in dmenu  
+        , ((mod4Mask, xK_r), spawn "/home/homayoun/.xmonad/FindFiles.sh") -- use mod4Mask + r to see a list of all files of Home directory in dmenu 
+        , ((mod4Mask .|. shiftMask, xK_r), spawn "/home/homayoun/.xmonad/FindDirectories.sh") -- use mod4Mask + shift + r to see a list of all directories in the Home directory in dmenu 
+        , ((mod4Mask, xK_g     ), windowPromptGoto  defaultXPConfig)
+        , ((mod4Mask .|. shiftMask, xK_b     ), windowPromptBring defaultXPConfig)
+	, ((mod4Mask, xK_b     ), sendMessage ToggleStruts)
+        , ((mod4Mask              , xK_y), focusUrgent )
+	-- start a pomodoro
+	, ((mod4Mask              , xK_n     ), spawn "touch ~/.pomodoro_session")
+
+--        , ((mod4Mask .|. controlMask, xK_Right),        -- a crazy keybinding!
+--         do t <- findWorkspace getSortByXineramaRule Next NonEmptyWS 2
+--            windows . view $ t                                         )
+--      ,((mod4Mask, xk_y), spawn "home/user/scripts/somescript.sh" ) -- use mod4Mask + y to run a script  
+        
+
+    -- volume control.
+--        , ("M-xK_F6", raiseVolume 4 >> return ())
+--        , ((mod4Mask,xK_F6), spawn "amixer -q set Master 5%- unmute") 
+--        , ((mod4Mask,xK_F7), spawn "amixer -q set Master 5%+ unmute") 
+--        , ("<XF86AudioMute>", spawn "amixer -q set Master toggle")
+--        , ("<XF86AudioLowerVolume>", spawn "amixer -q set Master 5%- unmute")
+--        , ("<XF86AudioRaiseVolume>", spawn "amixer -q set Master 5%+ unmute")
+        ]
+--main = xmonad defaultConfig { keys = keys defaultConfig `mappend`
+--    \c -> fromList [
+--        ((0, xK_F6), lowerVolume 4 >>= alert),
+--        ((0, xK_F7), raiseVolume 4 >>= alert)
+--    ]
+--}

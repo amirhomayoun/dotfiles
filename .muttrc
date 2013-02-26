@@ -1,0 +1,265 @@
+# A basic .muttrc for use with Gmail
+# .mutt/muttrc
+
+#macro index <f2> '<change-folder>imaps://imap.kitware.com<enter>'
+#macro index <f3> '<change-folder>imaps://imap.gmail.com<enter>'
+
+#folder-hook 'Gmail' 'source ~/.mutt/Gmail';\
+#account-hook 'Gmail' 'set imap_user=homayoun26 imap_pass=my_pw_Gmail';\
+#set query_command = "/usr/local/bin/goocaa -p Kitware %s"
+
+folder-hook 'Kitware' 'source ~/.mutt/Kitware';\
+account-hook 'Kitware' 'set imap_user="amir.sadoughi" imap_pass=my_pw_Kitware';\
+set query_command = "/usr/local/bin/goocaa -p Kitware %s"
+
+macro index <f2> '<sync-mailbox><enter-command>source ~/.mutt/Kitware<enter><change-folder>!<enter>'
+#macro index <f3> '<sync-mailbox><enter-command>source ~/.mutt/Gmail<enter><change-folder>!<enter>'
+
+
+# 'L' performs a notmuch query, showing only the results
+#macro index L "<enter-command>unset wait_key<enter><shell-escape>read -p 'notmuch query: ' x; echo \$x >~/.cache/mutt_terms<enter><limit>~i \"\`notmuch search --output=messages \$(cat ~/.cache/mutt_terms) | head -n 600 | perl -le '@a=<>;chomp@a;s/\^id:// for@a;$,=\"|\";print@a'\`\"<enter>" "show only messages matching a notmuch pattern"
+# 'a' shows all messages again (supersedes default <alias> binding)
+#macro index a "<limit>all\n" "show all messages (undo limit)"
+
+# search with notmuch ---------------------------------------------------------------------------------
+#macro index <F8> \
+#	  "<enter-command>unset wait_key<enter><shell-escape>notmuch-mutt --prompt search<enter><change-folder-readonly>`echo ${XDG_CACHE_HOME:-$HOME/.cache}/notmuch/mutt/results`<enter>" \
+#	  "notmuch: search mail"
+#macro index <F9> \
+#	  "<enter-command>unset wait_key<enter><pipe-message>notmuch-mutt thread<enter><change-folder-readonly>`echo ${XDG_CACHE_HOME:-$HOME/.cache}/notmuch/mutt/results`<enter><enter-command>set wait_key<enter>" \
+#          "notmuch: reconstruct thread"
+#macro index <F6> \
+#          "<enter-command>unset wait_key<enter><pipe-message>notmuch-mutt tag -inbox<enter>" \
+#		"notmuch: remove message from inbox"
+#
+
+#set my_pw_Kitware=`gnome-keyring-query get Mutt_Kitware`
+#set my_pw_Gmail=`gnome-keyring-query get Mutt_Gmail`
+
+# switch to default account on startup
+source ~/.mutt/Kitware
+
+
+# Change the following six lines to match your Gmail account details
+#set imap_user = "amir.sadoughi@kitware.com"
+#set imap_pass = ""
+#set imap_pass = ""
+#set smtp_url = "smtp://amir.sadoughi@smtp.kitware.com:587/"
+#set smtp_pass = ""
+#set from = "amir.sadoughi@kitware.com"
+#set realname = "Amir H. Sadoughi"
+
+
+# Change the following line to a different editor you prefer.
+set editor = "vim"
+
+# Basic config, you can leave this as is
+set folder = "imaps://imap.gmail.com:993"
+set spoolfile = "+INBOX"
+set imap_check_subscribed
+set hostname = gmail.com
+set mail_check = 30
+set timeout = 600
+set imap_keepalive = 300
+set postponed = "+[GMail]/Drafts"
+#set record = "+[GMail]/Sent Mail"
+#set record = "Sent Mail"
+set copy= no # actually save sent messages
+set header_cache=~/.mutt/cache/headers
+set message_cachedir=~/.mutt/cache/bodies
+set certificate_file=~/.mutt/certificates
+set move = no
+set include
+set metoo=yes
+set sort = 'threads'
+set sort_aux = 'last-date-received'
+set auto_tag = yes
+ignore "Authentication-Results:"
+ignore "DomainKey-Signature:"
+ignore "DKIM-Signature:"
+hdr_order Date From To Cc
+alternative_order text/plain text/html *
+auto_view text/html
+bind editor <Tab> complete-query
+bind editor ^T complete
+bind editor <space> noop 
+bind	index	G	group-reply
+bind	pager	G	group-reply
+bind	attach	G	group-reply
+
+
+# Gmail-style keyboard shortcuts
+macro index,pager y "<enter-command>unset trash\n <delete-message>" "Gmail archive message"
+macro index,pager d "<enter-command>set trash=\"imaps://imap.googlemail.com/[GMail]/Trash\"\n <delete-message>" "Gmail delete message"
+macro index,pager gi "<change-folder>=INBOX<enter>" "Go to inbox"
+macro index,pager ga "<change-folder>=[Gmail]/All Mail<enter>" "Go to all mail"
+macro index,pager gs "<change-folder>=[Gmail]/Sent Mail<enter>" "Go to sent messages"
+macro index,pager gS "<change-folder>=[Gmail]/Starred<enter>" "Go to starred messages"
+macro index,pager gd "<change-folder>=[Gmail]/Drafts<enter>" "Go to drafts"
+
+
+#########################################################Mine###########################################################
+#set index_format="%?M?+& ?%2M %2e %Z %D %-20.20F (%4c) %s"
+#set index_format="%?M?+& ?%2M %2e %Z %-20.20F (%4c) %s"
+set pager_format="%4C %Z %{%b %D} %-15.15L (%?l?%4l&%4c?) %s"
+color index brightwhite default ~O         # color for new messages
+color index yellow default ~N         # color for new messages
+#color status brightblue magenta          # ugh!
+color signature brightyellow black       # bumblebee
+#color indicator green black
+color indicator brightyellow black
+
+
+#####################5Settings####################
+
+##Black Text on White Background
+#color hdrdefault black white
+#color quoted black white
+#color signature black white
+#color status white black
+#color indicator white black
+#color normal black white
+#
+##White Text on Black Background
+#color hdrdefault white black
+#color quoted white black
+#color signature white black
+#color status black white
+#color indicator black white
+#color normal white black
+#
+##White Text on Blue Background
+#color hdrdefault white blue
+#color quoted white blue
+#color signature white blue
+#color status yellow blue
+#color indicator yellow blue
+#color normal white blue
+#
+##Green Text on Black Background
+#color hdrdefault green black
+#color quoted green black
+#color signature green black
+#color status black green
+#color indicator black green
+#color normal green black
+#
+##Amber Text on Black Background
+#color hdrdefault yellow black
+#color quoted yellow black
+#color signature yellow black
+#color status black yellow
+#color indicator black yellow
+#color normal yellow black
+
+#################################NEW SET OF COLORS FOR BLACK BACKGROUND###################################
+#colors
+#---- Mutt Colors for Black Background -------
+#color   hdrdefault   blue              black
+#color   quoted       blue              black
+#color   signature    blue              black
+#color   attachment   red               black
+#color   message      brightred         black
+#color   error        brightred         black
+#color   indicator    green               black
+#color   status       brightgreen       blue
+#color   tree         white             black
+#color   normal       white             black
+#color   markers      red               black
+#color   search       white             black
+#color   tilde        brightmagenta     black
+#color   index        blue              black ~F
+#color   index        red               black "~N|~O"
+#
+############################################################################################################
+
+#####################5Settings####################
+
+
+#Bcolor index blue black ~R
+#color index blue default "~(~P) !~H SPAM"
+#color index brightblue default "(~x cip.informatik.uni-erlangen.de | ~P | ~p) !~H SPAM"
+#color index red default "~N !~H SPAM"
+#color index brightred default "~N (~P|~p|~x cip.informatik.uni-erlangen.de) !~H SPAM"
+#color index brightred default "~s REMINDER !~H SPAM"
+#color index brightred default "~F !~H SPAM"
+#color attachment brightyellow default # file attachments 
+#color search brightred default # search matches 
+#color quoted brightyellow default # quoted text in replies
+#color quoted1 magenta default # quoted text in replies
+#color body cyan default "((ftp|http|https)://|news:)[^ >)\"\t]+" # URLs 
+#color body cyan default "[-a-z_0-9.+]+@[-a-z_0-9.]+" # email
+
+set timeout=30    # mutt 'presses' (like) a key for you (while you're idle) 
+                  # each x sec to trigger the thing below
+set mail_check=5  # mutt checks for new mails on every keystroke
+                  # but not more often then once in 5 seconds
+set beep=yes
+set beep_new=yes      # beep on new messages in the mailboxes
+
+#set query_command = "/usr/local/bin/goocaa %s"
+
+set signature="~/.signature"
+
+# For better looks
+set markers=no # don't put '+' at the beginning of wrapped lines
+set pager_index_lines= 10 # how large is the index window?
+set sort = 'threads'
+set sort_aux = 'reverse-last-date-received'
+
+# My Editor
+set editor='vim + -c "set textwidth=72" -c "set wrap" -c "set nocp" -c "?^$" -c "set spell"'
+
+# My Rolodeck :)
+set alias_file= ~/.mutt/aliases
+set sort_alias= alias
+set reverse_alias=yes
+source $alias_file
+
+set abort_nosubject=ask-yes
+set abort_unmodified=ask-yes
+#set beep_new
+
+set arrow_cursor = no
+
+set mailcap_path="~/.mutt/mailcap.mutt"
+
+
+#########################################################Mine###########################################################
+
+
+#########################################################SideBar###########################################################
+# set up the sidebar, default not visible
+set sidebar_width=18
+set sidebar_visible=no
+
+# which mailboxes to list in the sidebar
+mailboxes =inbox =ml
+
+# color of folders with new mail
+color sidebar_new yellow default
+
+
+# ctrl-n, ctrl-p to select next, prev folder
+# ctrl-o to open selected folder
+bind index \CP sidebar-prev
+bind index \CN sidebar-next
+bind index \CO sidebar-open
+bind pager \CP sidebar-prev
+bind pager \CN sidebar-next
+bind pager \CO sidebar-open
+
+# I don't need these.  just for documentation purposes.  See below.
+# sidebar-scroll-up
+# sidebar-scroll-down
+
+# b toggles sidebar visibility
+macro index b '<enter-command>toggle sidebar_visible<enter>'
+macro pager b '<enter-command>toggle sidebar_visible<enter>'
+#
+# Mario Holbe suggests:
+# macro index b '<enter-command>toggle sidebar_visible<enter><refresh>'
+# macro pager b '<enter-command>toggle sidebar_visible<enter><redraw-screen>'
+#
+
+#########################################################SideBar###########################################################
