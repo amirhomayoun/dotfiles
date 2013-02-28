@@ -13,10 +13,11 @@ import XMonad.Hooks.EwmhDesktops
 import XMonad.Prompt
 import XMonad.Prompt.Window
 import XMonad.Hooks.UrgencyHook
+import XMonad.Layout.NoBorders
  
 myManageHook = composeAll
     [ className =? "Gimp"      --> doFloat
-    , className =? "evince" --> doShift "test"
+    , className =? "evince" --> doShift "7"
     , className =? "Vncviewer" --> doFloat
     ]
 --myStartUpHook =
@@ -78,13 +79,19 @@ main = do
         , (( mod4Mask, xK_F4), kill) -- to kill applications  
         , ((0  , 0x1008FF11), spawn "amixer -q set Master 5%- unmute") --Control volume 
         , ((0  , 0x1008FF13), spawn "amixer -q set Master 5%+ unmute") --Control volume 
-        , ((0  , 0x1008FF12), spawn "amixer -q set Master toggle") --Control volume 
-        , ((0  , 0x1008FF14), spawn " mocp --toggle-pause") --
-        , ((0  , 0x1008FF15), spawn " mocp --stop") --
-        , ((0  , 0x1008FF16), spawn " mocp --previous") --
-        , ((0  , 0x1008FF17), spawn " mocp --next") --
-
-	, ((0, xK_Print), spawn "scrot") -- use the print key to capture screenshot with scrot  
+--        , ((0  , 0x1008FF12), spawn "amixer -q set Master toggle") --Control volume 
+        , ((0  , 0x1008FF12), spawn "~/.xmonad/ToggleMute.sh") --Control volume 
+--        , ((0  , 0x1008FF12), spawn "pactl set-sink-mute @DEFAULT_SINK@ 1") --Control volume 
+--
+--        , ((0  , 0x1008FF14), spawn " mocp --toggle-pause") --
+--        , ((0  , 0x1008FF15), spawn " mocp --stop") --
+--        , ((0  , 0x1008FF16), spawn " mocp --previous") --
+--        , ((0  , 0x1008FF17), spawn " mocp --next") --
+        , ((0  , 0x1008FF14), spawn "ncmpcpp toggle;notify-send play/pause")
+        , ((0  , 0x1008FF18), spawn "ncmpcpp stop; notify-send stop")
+        , ((0  , 0x1008FF16), spawn "ncmpcpp prev;notify-send Previous ")
+        , ((0  , 0x1008FF17), spawn "ncmpcpp next")
+        , ((0, xK_Print), spawn "scrot") -- use the print key to capture screenshot with scrot  
 --      , ((mod4Mask,               xK_Down),  nextWS)
 --	, ((mod4Mask,               xK_Up),    prevWS)
 --	, ((mod4Mask .|. shiftMask, xK_Down),  shiftToNext)
@@ -96,8 +103,8 @@ main = do
 	, ((mod4Mask,               xK_z),     toggleWS)
         , ((mod4Mask     , xK_f), moveTo Next EmptyWS)  -- find a free workspace
         , ((mod4Mask .|. shiftMask, xK_f), shiftTo Next EmptyWS)  -- shift to the next free workspace
---        , ((mod4Mask, xK_g), goToSelected defaultGSConfig)
-        , ((mod4Mask, xK_s), spawnSelected defaultGSConfig ["xterm","gmplayer","gvim"])
+--      , ((mod4Mask, xK_g), goToSelected defaultGSConfig)
+--      , ((mod4Mask, xK_s), spawnSelected defaultGSConfig ["xterm","gmplayer","gvim"])
         , ((mod4Mask, xK_a), spawn "/home/homayoun/.xmonad/ChooseWindow.sh" ) -- use mod4Mask + a to see all the windows in dmenu  
         , ((mod4Mask, xK_r), spawn "/home/homayoun/.xmonad/FindFiles.sh") -- use mod4Mask + r to see a list of all files of Home directory in dmenu 
         , ((mod4Mask .|. shiftMask, xK_r), spawn "/home/homayoun/.xmonad/FindDirectories.sh") -- use mod4Mask + shift + r to see a list of all directories in the Home directory in dmenu 
