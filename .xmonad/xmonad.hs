@@ -60,6 +60,7 @@ main = do
                         }
 
         , modMask = mod4Mask     -- Rebind Mod to the Windows key
+        , handleEventHook    = fullscreenEventHook
 	, workspaces = myWorkspaces
 	, terminal = myTerminal
 	, focusedBorderColor = myFocusedBorderColor
