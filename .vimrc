@@ -45,18 +45,19 @@ autocmd Syntax json sou ~/.vim/syntax/json.vim
 autocmd BufRead,BufNewFile Vagrantfile set filetype=ruby
 
 " Highlight characters that go over 80 columns
-highlight OverLength ctermbg=red ctermfg=white guibg=#592929
-match OverLength /\%81v.\+/
+"highlight OverLength ctermbg=red ctermfg=white guibg=#592929
+"match OverLength /\%81v.\+/
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " 04. Vim UI                                                                 "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set number                " show line numbers
-set cul                   " highlight current line
+set nocul                   " highlight current line
 set laststatus=2          " last window always has a statusline
 set hlsearch            " Don't continue to highlight searched phrases.
 set incsearch             " But do highlight as you type your search.
-set ignorecase            " Make searches case-insensitive.
+"set ignorecase            " Make searches case-insensitive.
+set smartcase
 set ruler                 " Always show info along bottom.
 set showmatch
 "set statusline=%<%f\%h%m%r%=%-20.(line=%l\ \ col=%c%V\ \ totlin=%L%)\ \ \%h%m%r%=%-40(bytval=0x%B,%n%Y%)\%P
@@ -100,7 +101,18 @@ set shiftwidth=4          " indent/outdent by 4 columns
 set shiftround            " always indent/outdent to the nearest tabstop
 set expandtab             " use spaces instead of tabs
 set smarttab              " use tabs at the start of a line, spaces elsewhere
-set nowrap                " don't wrap text
+set wrap                " don't wrap text
 
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 06. Misc
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:miniBufExplMapWindowNavVim = 1        "minibufexplorer 
+let g:miniBufExplMapWindowNavArrows = 1     "minibufexplorer 
+let g:miniBufExplMapCTabSwitchBufs = 1      "minibufexplorer 
+let g:miniBufExplModSelTarget = 1           "minibufexplorer  
+
+map <F2> :ls<CR>:b<Space>           "swich buffers
+set tags=tags;/                     "ctag
 
 
