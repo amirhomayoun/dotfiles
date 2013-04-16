@@ -13,14 +13,17 @@ import XMonad.Hooks.EwmhDesktops
 import XMonad.Prompt
 import XMonad.Prompt.Window
 import XMonad.Hooks.UrgencyHook
+import XMonad.Hooks.SetWMName
 import XMonad.Layout.NoBorders
- 
+import XMonad.Layout.Spiral
+
 myManageHook = composeAll
     [ className =? "Gimp"      --> doFloat
-    , className =? "evince" --> doShift "7"
+    , className =? "evince" --> doShift "test"
     , className =? "Vncviewer" --> doFloat
     ]
---myStartUpHook =
+
+myStartUpHook = setWMName "LG3D"
 --      spawnOn "workspace1" "program1"
 --      â€¦
 --      spawnOn "workspaceN" "programN"
@@ -28,7 +31,30 @@ myManageHook = composeAll
 
 --myWorkspaces = ["1","2","3","4","5-Wb","6","7-Ch","8-Ml","9-Lg"]  
 myWorkspaces = ["1☀","2☻","3✖","4◑","5❀","6☂","7♫","8☎","9◕"]  
-myNormalBorderColor = "#ff0000"
+--myLayoutHook = lessBorders OnlyFloat $ avoidStruts  $ smartBorders $layoutHook myLayout--defaultConfig
+myLayoutHook = lessBorders OnlyFloat 
+             $ avoidStruts  
+             $ smartBorders 
+             $ tiled 
+           ||| Mirror tiled 
+           ||| noBorders Full 
+           ||| spiral (1 / 1)
+    where
+    --default tiling algorithm partitions the screen into two panes
+    tiled   = Tall nmaster delta ratio
+
+    -- The default number of windows in the master pane
+    nmaster = 1
+
+    -- Default proportion of screen occupied by master pane
+--    ratio   = 1/2
+    ratio   = toRational (2/(1+sqrt(5)::Double)) -- golden
+    -- Percent of screen to increment by when resizing panes
+    delta   = 3/100
+
+
+--myNormalBorderColor = "#ff0000"
+myNormalBorderColor = "#000000"
 myFocusedBorderColor = "#00FF00"
 myTerminal = "urxvt"
  
@@ -43,11 +69,13 @@ main = do
     xmonad $  ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
         { manageHook = manageDocks <+> myManageHook -- make sure to include myManageHook definition from above
                         <+> manageHook defaultConfig
-        , layoutHook = avoidStruts  $  layoutHook defaultConfig
+        , layoutHook = myLayoutHook 
 --        ,  startupHook = do
 --          spawnOn  "8" "evince"
 --          spawnOn "test" "evince"
---      , startupHook = myStartUpHook
+--        , startupHook = myStartUpHook
+          , startupHook = setWMName "LG3D"
+
         , logHook = dynamicLogWithPP xmobarPP
                         { ppOutput = hPutStrLn xmproc
                         , ppTitle = xmobarColor "green" "" . shorten 50
@@ -60,7 +88,6 @@ main = do
                         }
 
         , modMask = mod4Mask     -- Rebind Mod to the Windows key
-        , handleEventHook    = fullscreenEventHook
 	, workspaces = myWorkspaces
 	, terminal = myTerminal
 	, focusedBorderColor = myFocusedBorderColor
@@ -80,19 +107,13 @@ main = do
         , (( mod4Mask, xK_F4), kill) -- to kill applications  
         , ((0  , 0x1008FF11), spawn "amixer -q set Master 5%- unmute") --Control volume 
         , ((0  , 0x1008FF13), spawn "amixer -q set Master 5%+ unmute") --Control volume 
---        , ((0  , 0x1008FF12), spawn "amixer -q set Master toggle") --Control volume 
-        , ((0  , 0x1008FF12), spawn "~/.xmonad/ToggleMute.sh") --Control volume 
---        , ((0  , 0x1008FF12), spawn "pactl set-sink-mute @DEFAULT_SINK@ 1") --Control volume 
---
---        , ((0  , 0x1008FF14), spawn " mocp --toggle-pause") --
---        , ((0  , 0x1008FF15), spawn " mocp --stop") --
---        , ((0  , 0x1008FF16), spawn " mocp --previous") --
---        , ((0  , 0x1008FF17), spawn " mocp --next") --
-        , ((0  , 0x1008FF14), spawn "ncmpcpp toggle;notify-send play/pause")
-        , ((0  , 0x1008FF18), spawn "ncmpcpp stop; notify-send stop")
-        , ((0  , 0x1008FF16), spawn "ncmpcpp prev;notify-send Previous ")
-        , ((0  , 0x1008FF17), spawn "ncmpcpp next")
-        , ((0, xK_Print), spawn "scrot") -- use the print key to capture screenshot with scrot  
+        , ((0  , 0x1008FF12), spawn "amixer -q set Master toggle") --Control volume 
+        , ((0  , 0x1008FF14), spawn " mocp --toggle-pause") --
+        , ((0  , 0x1008FF15), spawn " mocp --stop") --
+        , ((0  , 0x1008FF16), spawn " mocp --previous") --
+        , ((0  , 0x1008FF17), spawn " mocp --next") --
+
+	, ((0, xK_Print), spawn "scrot") -- use the print key to capture screenshot with scrot  
 --      , ((mod4Mask,               xK_Down),  nextWS)
 --	, ((mod4Mask,               xK_Up),    prevWS)
 --	, ((mod4Mask .|. shiftMask, xK_Down),  shiftToNext)
@@ -104,8 +125,8 @@ main = do
 	, ((mod4Mask,               xK_z),     toggleWS)
         , ((mod4Mask     , xK_f), moveTo Next EmptyWS)  -- find a free workspace
         , ((mod4Mask .|. shiftMask, xK_f), shiftTo Next EmptyWS)  -- shift to the next free workspace
---      , ((mod4Mask, xK_g), goToSelected defaultGSConfig)
---      , ((mod4Mask, xK_s), spawnSelected defaultGSConfig ["xterm","gmplayer","gvim"])
+--        , ((mod4Mask, xK_g), goToSelected defaultGSConfig)
+        , ((mod4Mask, xK_s), spawnSelected defaultGSConfig ["xterm","gmplayer","gvim"])
         , ((mod4Mask, xK_a), spawn "/home/homayoun/.xmonad/ChooseWindow.sh" ) -- use mod4Mask + a to see all the windows in dmenu  
         , ((mod4Mask, xK_r), spawn "/home/homayoun/.xmonad/FindFiles.sh") -- use mod4Mask + r to see a list of all files of Home directory in dmenu 
         , ((mod4Mask .|. shiftMask, xK_r), spawn "/home/homayoun/.xmonad/FindDirectories.sh") -- use mod4Mask + shift + r to see a list of all directories in the Home directory in dmenu 
@@ -121,7 +142,8 @@ main = do
 	-- start a pomodoro
 	, ((mod4Mask              , xK_n     ), spawn "touch ~/.pomodoro_session")
 	-- Run google calendar
-	, ((mod4Mask,xK_c), spawn "chromium-browser --app='https://www.google.com/calendar/b/1/render'")
+--	, ((mod4Mask,xK_c), spawn "chromium-browser --app='https://www.google.com/calendar/b/1/render'")
+	, ((mod4Mask,xK_c), spawn "gnome-calculator")
 --        , ((mod4Mask .|. controlMask, xK_Right),        -- a crazy keybinding!
 --         do t <- findWorkspace getSortByXineramaRule Next NonEmptyWS 2
 --            windows . view $ t                                         )
