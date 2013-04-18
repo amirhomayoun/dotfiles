@@ -21,7 +21,7 @@ myManageHook = composeAll
     [ className =? "Gimp"      --> doFloat
     , className =? "evince" --> doShift "test"
     , className =? "Vncviewer" --> doFloat
-    , className =? "xcalc" --> doFloat
+    , className =? "XCalc" --> doFloat
     ]
 
 myStartUpHook = setWMName "LG3D"
@@ -67,7 +67,8 @@ main = do
     xmproci5 <- spawnPipe "killall everpad; everpad"
     xmproci6 <- spawnPipe "killall clipit; clipit"
     xmproci7 <- spawnPipe "guake"
-    xmonad $  ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
+    --xmonad $  ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
+    xmonad $  ewmh $ withUrgencyHookC BorderUrgencyHook { urgencyBorderColor = "yellow" } urgencyConfig {suppressWhen=Focused} $ defaultConfig
         { manageHook = manageDocks <+> myManageHook -- make sure to include myManageHook definition from above
                         <+> manageHook defaultConfig
         , layoutHook = myLayoutHook 
@@ -122,7 +123,7 @@ main = do
     , ((0  , 0x1008FF16), spawn "ncmpcpp prev;notify-send Previous ")
     , ((0  , 0x1008FF17), spawn "ncmpcpp next")
     , ((0, xK_Print), spawn "scrot") -- use the print key to capture screenshot with scrot  
-    --      , ((mod4Mask,               xK_Down),  nextWS)
+    --  , ((mod4Mask,               xK_Down),  nextWS)
     --	, ((mod4Mask,               xK_Up),    prevWS)
     --	, ((mod4Mask .|. shiftMask, xK_Down),  shiftToNext)
     --	, ((mod4Mask .|. shiftMask, xK_Up),    shiftToPrev)
@@ -130,10 +131,10 @@ main = do
     --	, ((mod4Mask,               xK_Left),  prevScreen)
     , ((mod4Mask .|. shiftMask, xK_Right), shiftNextScreen)
     , ((mod4Mask .|. shiftMask, xK_Left), shiftPrevScreen)
-, ((mod4Mask,               xK_z),     toggleWS)
+    , ((mod4Mask,               xK_z),     toggleWS)
     , ((mod4Mask     , xK_f), moveTo Next EmptyWS)  -- find a free workspace
     , ((mod4Mask .|. shiftMask, xK_f), shiftTo Next EmptyWS)  -- shift to the next free workspace
---      , ((mod4Mask, xK_g), goToSelected defaultGSConfig)
+    --      , ((mod4Mask, xK_g), goToSelected defaultGSConfig)
     --      , ((mod4Mask, xK_s), spawnSelected defaultGSConfig ["xterm","gmplayer","gvim"])
     , ((mod4Mask, xK_a), spawn "/home/homayoun/.xmonad/ChooseWindow.sh" ) -- use mod4Mask + a to see all the windows in dmenu  
     , ((mod4Mask, xK_r), spawn "/home/homayoun/.xmonad/FindFiles.sh") -- use mod4Mask + r to see a list of all files of Home directory in dmenu 
@@ -142,32 +143,30 @@ main = do
     , ((mod4Mask .|. shiftMask, xK_b     ), windowPromptBring defaultXPConfig)
     , ((mod4Mask, xK_b     ), sendMessage ToggleStruts)
     , ((mod4Mask              , xK_y), focusUrgent )
-, ((mod4Mask, xK_b     ), sendMessage ToggleStruts)
+    , ((mod4Mask, xK_b     ), sendMessage ToggleStruts)
     -- Increment the number of windows in the master area
-, ((mod4Mask .|. shiftMask , xK_comma ), sendMessage (IncMasterN 1))
+    , ((mod4Mask .|. shiftMask , xK_comma ), sendMessage (IncMasterN 1))
     -- Deincrement the number of windows in the master area
-, ((mod4Mask .|. shiftMask , xK_period), sendMessage (IncMasterN (-1)))
+    , ((mod4Mask .|. shiftMask , xK_period), sendMessage (IncMasterN (-1)))
     -- start a pomodoro
     , ((mod4Mask              , xK_n     ), spawn "touch ~/.pomodoro_session")
     -- Run google calendar
-    , ((mod4Mask,xK_c), spawn "xcalc")
+, ((mod4Mask,xK_c), spawn "xcalc")
     --        , ((mod4Mask .|. controlMask, xK_Right),        -- a crazy keybinding!
             --         do t <- findWorkspace getSortByXineramaRule Next NonEmptyWS 2
             --            windows . view $ t                                         )
     --      ,((mod4Mask, xk_y), spawn "home/user/scripts/somescript.sh" ) -- use mod4Mask + y to run a script  
-
-
     -- volume control.
-    --        , ("M-xK_F6", raiseVolume 4 >> return ())
-    --        , ((mod4Mask,xK_F6), spawn "amixer -q set Master 5%- unmute") 
-    --        , ((mod4Mask,xK_F7), spawn "amixer -q set Master 5%+ unmute") 
-    --        , ("<XF86AudioMute>", spawn "amixer -q set Master toggle")
-    --        , ("<XF86AudioLowerVolume>", spawn "amixer -q set Master 5%- unmute")
-    --        , ("<XF86AudioRaiseVolume>", spawn "amixer -q set Master 5%+ unmute")
+--        , ("M-xK_F6", raiseVolume 4 >> return ())
+--        , ((mod4Mask,xK_F6), spawn "amixer -q set Master 5%- unmute") 
+--        , ((mod4Mask,xK_F7), spawn "amixer -q set Master 5%+ unmute") 
+--        , ("<XF86AudioMute>", spawn "amixer -q set Master toggle")
+--        , ("<XF86AudioLowerVolume>", spawn "amixer -q set Master 5%- unmute")
+--        , ("<XF86AudioRaiseVolume>", spawn "amixer -q set Master 5%+ unmute")
     ]
-    --main = xmonad defaultConfig { keys = keys defaultConfig `mappend`
-        --    \c -> fromList [
-            --        ((0, xK_F6), lowerVolume 4 >>= alert),
-            --        ((0, xK_F7), raiseVolume 4 >>= alert)
-                --    ]
-                --}
+--main = xmonad defaultConfig { keys = keys defaultConfig `mappend`
+--    \c -> fromList [
+--        ((0, xK_F6), lowerVolume 4 >>= alert),
+--        ((0, xK_F7), raiseVolume 4 >>= alert)
+--    ]
+--}
