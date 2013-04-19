@@ -16,6 +16,11 @@ import XMonad.Hooks.UrgencyHook
 import XMonad.Hooks.SetWMName
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Spiral
+import XMonad.Layout.Grid
+import XMonad.Layout.Tabbed
+--import XMonad.Layout.WindowArranger
+import XMonad.Layout.Magnifier
+import XMonad.Layout.ZoomRow
 
 myManageHook = composeAll
     [ className =? "Gimp"      --> doFloat
@@ -37,8 +42,12 @@ myLayoutHook = lessBorders OnlyFloat
              $ avoidStruts  
              $ smartBorders 
              $ tiled 
-           ||| Mirror tiled 
+           ||| magnifier(Mirror tiled)
            ||| noBorders Full 
+           ||| Grid
+           ||| zoomRow
+           ||| Mirror zoomRow
+           ||| simpleTabbed
            ||| spiral (1 / 1)
     where
     --default tiling algorithm partitions the screen into two panes
@@ -72,6 +81,7 @@ main = do
         { manageHook = manageDocks <+> myManageHook -- make sure to include myManageHook definition from above
                         <+> manageHook defaultConfig
         , layoutHook = myLayoutHook 
+--        , layoutHook = windowArrange myLayoutHook 
 --        ,  startupHook = do
 --          spawnOn  "8" "evince"
 --          spawnOn "test" "evince"
@@ -94,7 +104,7 @@ main = do
 	, workspaces = myWorkspaces
 	, terminal = myTerminal
 	, focusedBorderColor = myFocusedBorderColor
-    , normalBorderColor = myNormalBorderColor
+	, normalBorderColor = myNormalBorderColor
 
         } `additionalKeys`
 [ ((mod4Mask .|. shiftMask, xK_z), spawn "xscreensaver-command -lock")
@@ -129,33 +139,66 @@ main = do
     --	, ((mod4Mask .|. shiftMask, xK_Up),    shiftToPrev)
     --	, ((mod4Mask,               xK_Right), nextScreen)
     --	, ((mod4Mask,               xK_Left),  prevScreen)
-    , ((mod4Mask .|. shiftMask, xK_Right), shiftNextScreen)
-    , ((mod4Mask .|. shiftMask, xK_Left), shiftPrevScreen)
-    , ((mod4Mask,               xK_z),     toggleWS)
-    , ((mod4Mask     , xK_f), moveTo Next EmptyWS)  -- find a free workspace
-    , ((mod4Mask .|. shiftMask, xK_f), shiftTo Next EmptyWS)  -- shift to the next free workspace
-    --      , ((mod4Mask, xK_g), goToSelected defaultGSConfig)
-    --      , ((mod4Mask, xK_s), spawnSelected defaultGSConfig ["xterm","gmplayer","gvim"])
-    , ((mod4Mask, xK_a), spawn "/home/homayoun/.xmonad/ChooseWindow.sh" ) -- use mod4Mask + a to see all the windows in dmenu  
-    , ((mod4Mask, xK_r), spawn "/home/homayoun/.xmonad/FindFiles.sh") -- use mod4Mask + r to see a list of all files of Home directory in dmenu 
-    , ((mod4Mask .|. shiftMask, xK_r), spawn "/home/homayoun/.xmonad/FindDirectories.sh") -- use mod4Mask + shift + r to see a list of all directories in the Home directory in dmenu 
-    , ((mod4Mask, xK_g     ), windowPromptGoto  defaultXPConfig)
-    , ((mod4Mask .|. shiftMask, xK_b     ), windowPromptBring defaultXPConfig)
-    , ((mod4Mask, xK_b     ), sendMessage ToggleStruts)
-    , ((mod4Mask              , xK_y), focusUrgent )
-    , ((mod4Mask, xK_b     ), sendMessage ToggleStruts)
-    -- Increment the number of windows in the master area
-    , ((mod4Mask .|. shiftMask , xK_comma ), sendMessage (IncMasterN 1))
-    -- Deincrement the number of windows in the master area
-    , ((mod4Mask .|. shiftMask , xK_period), sendMessage (IncMasterN (-1)))
-    -- start a pomodoro
-    , ((mod4Mask              , xK_n     ), spawn "touch ~/.pomodoro_session")
-    -- Run google calendar
-, ((mod4Mask,xK_c), spawn "xcalc")
-    --        , ((mod4Mask .|. controlMask, xK_Right),        -- a crazy keybinding!
-            --         do t <- findWorkspace getSortByXineramaRule Next NonEmptyWS 2
-            --            windows . view $ t                                         )
-    --      ,((mod4Mask, xk_y), spawn "home/user/scripts/somescript.sh" ) -- use mod4Mask + y to run a script  
+        , ((mod4Mask .|. shiftMask, xK_Right), shiftNextScreen)
+        , ((mod4Mask .|. shiftMask, xK_Left), shiftPrevScreen)
+        , ((mod4Mask,               xK_z),     toggleWS)
+        , ((mod4Mask     , xK_f), moveTo Next EmptyWS)  -- find a free workspace
+        , ((mod4Mask .|. shiftMask, xK_f), shiftTo Next EmptyWS)  -- shift to the next free workspace
+    --  , ((mod4Mask, xK_g), goToSelected defaultGSConfig)
+        , ((mod4Mask, xK_s), spawnSelected defaultGSConfig ["xterm","gmplayer","gvim"])
+        , ((mod4Mask, xK_a), spawn "/home/homayoun/.xmonad/ChooseWindow.sh" ) -- use mod4Mask + a to see all the windows in dmenu  
+        , ((mod4Mask, xK_r), spawn "/home/homayoun/.xmonad/FindFiles.sh") -- use mod4Mask + r to see a list of all files of Home directory in dmenu 
+        , ((mod4Mask .|. shiftMask, xK_r), spawn "/home/homayoun/.xmonad/FindDirectories.sh") -- use mod4Mask + shift + r to see a list of all directories in the Home directory in dmenu 
+        , ((mod4Mask, xK_g     ), windowPromptGoto  defaultXPConfig)
+        , ((mod4Mask .|. shiftMask, xK_b     ), windowPromptBring defaultXPConfig)
+        , ((mod4Mask, xK_b     ), sendMessage ToggleStruts)
+        , ((mod4Mask              , xK_y), focusUrgent )
+        , ((mod4Mask, xK_b     ), sendMessage ToggleStruts)
+         -- Increment the number of windows in the master area
+        , ((mod4Mask .|. shiftMask , xK_comma ), sendMessage (IncMasterN 1))
+         -- Deincrement the number of windows in the master area
+        , ((mod4Mask .|. shiftMask , xK_period), sendMessage (IncMasterN (-1)))
+	-- start a pomodoro
+	    , ((mod4Mask              , xK_n     ), spawn "touch ~/.pomodoro_session")
+	-- Run google calendar
+--	    , ((mod4Mask,xK_c), spawn "chromium-browser --app='https://www.google.com/calendar/b/1/render'")
+	    , ((mod4Mask,xK_c), spawn "gnome-calculator")
+    
+--        WindowsArrangerSettings
+--        , ((mod4Mask .|. controlMask              , xK_s    ), sendMessage  Arrange         )
+--        , ((mod4Mask .|. controlMask .|. shiftMask, xK_s    ), sendMessage  DeArrange       )
+--        , ((mod4Mask .|. controlMask              , xK_Left ), sendMessage (MoveLeft      10))
+--        , ((mod4Mask .|. controlMask              , xK_Right), sendMessage (MoveRight     10))
+--        , ((mod4Mask .|. controlMask              , xK_Down ), sendMessage (MoveDown      10))
+--        , ((mod4Mask .|. controlMask              , xK_Up   ), sendMessage (MoveUp        10))
+--        , ((mod4Mask                 .|. shiftMask, xK_Left ), sendMessage (IncreaseLeft  10))
+--        , ((mod4Mask                 .|. shiftMask, xK_Right), sendMessage (IncreaseRight 10))
+--        , ((mod4Mask                 .|. shiftMask, xK_Down ), sendMessage (IncreaseDown  10))
+--        , ((mod4Mask                 .|. shiftMask, xK_Up   ), sendMessage (IncreaseUp    10))
+--        , ((mod4Mask .|. controlMask .|. shiftMask, xK_Left ), sendMessage (DecreaseLeft  10))
+--        , ((mod4Mask .|. controlMask .|. shiftMask, xK_Right), sendMessage (DecreaseRight 10))
+--        , ((mod4Mask .|. controlMask .|. shiftMask, xK_Down ), sendMessage (DecreaseDown  10))
+--        , ((mod4Mask .|. controlMask .|. shiftMask, xK_Up   ), sendMessage (DecreaseUp    10))
+--
+--        ZoomRow Settings
+          --Increase the size occupied by the focused window
+          , ((mod4Mask .|. shiftMask, xK_minus), sendMessage zoomIn)
+          -- Decrease the size occupied by the focused window
+          , ((mod4Mask             , xK_minus), sendMessage zoomOut)
+          -- Reset the size occupied by the focused window
+          , ((mod4Mask             , xK_equal), sendMessage zoomReset)
+          -- (Un)Maximize the focused window
+          , ((mod4Mask             , xK_F11), sendMessage ZoomFullToggle)
+  
+   
+
+
+--      , ((mod4Mask .|. controlMask, xK_Right),        -- a crazy keybinding!
+--         do t <- findWorkspace getSortByXineramaRule Next NonEmptyWS 2
+--            windows . view $ t                                         )
+--      ,((mod4Mask, xk_y), spawn "home/user/scripts/somescript.sh" ) -- use mod4Mask + y to run a script  
+        
+
     -- volume control.
 --        , ("M-xK_F6", raiseVolume 4 >> return ())
 --        , ((mod4Mask,xK_F6), spawn "amixer -q set Master 5%- unmute") 
@@ -163,7 +206,7 @@ main = do
 --        , ("<XF86AudioMute>", spawn "amixer -q set Master toggle")
 --        , ("<XF86AudioLowerVolume>", spawn "amixer -q set Master 5%- unmute")
 --        , ("<XF86AudioRaiseVolume>", spawn "amixer -q set Master 5%+ unmute")
-    ]
+        ]
 --main = xmonad defaultConfig { keys = keys defaultConfig `mappend`
 --    \c -> fromList [
 --        ((0, xK_F6), lowerVolume 4 >>= alert),

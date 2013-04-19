@@ -88,7 +88,8 @@ set ls=2
 set cindent
 :ab #b /****************************************
 :ab #e ^V^H*****************************************/
-set clipboard+=unnamed
+" set clipboard=unnamed " It is apparently for Window$
+set clipboard=unnamedplus
 set nu
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -115,4 +116,6 @@ let g:miniBufExplModSelTarget = 1           "minibufexplorer
 map <F2> :ls<CR>:b<Space>           "swich buffers
 set tags=tags;/                     "ctag
 
-
+if has('mouse')
+    set mouse=a
+endif
