@@ -116,6 +116,6 @@ let g:miniBufExplModSelTarget = 1           "minibufexplorer
 map <F2> :ls<CR>:b<Space>           "swich buffers
 set tags=tags;/                     "ctag
 
-if has('mouse')
-    set mouse=a
-endif
+"if has('mouse')
+"    set mouse=a
+"endif

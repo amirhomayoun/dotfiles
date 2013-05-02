@@ -35,7 +35,7 @@ myStartUpHook = setWMName "LG3D"
 --      spawnOn "workspaceN" "programN"
 
 
---myWorkspaces = ["1","2","3","4","5-Wb","6","7-Ch","8-Ml","9-Lg"]  
+--myWorkspaces = ["1","2","3","4","5","6","7","8","9"]  
 myWorkspaces = ["1☀","2☻","3✖","4◑","5❀","6☂","7♫","8☎","9◕"]  
 --myLayoutHook = lessBorders OnlyFloat $ avoidStruts  $ smartBorders $layoutHook myLayout--defaultConfig
 myLayoutHook = lessBorders OnlyFloat 

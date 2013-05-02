@@ -3,7 +3,7 @@
 !-------------------------------------------------------------------------------
  
 Xft.dpi:                    96
-Xft.antialias:              false
+Xft.antialias:              true 
 Xft.rgba:                   rgb
 Xft.hinting:                true
 Xft.hintstyle:              hintslight
@@ -82,6 +82,9 @@ URxvt*buffered: false
 
 URxvt*keysym.Home: \033[1~
 URxvt*keysym.End: \033[4~
+
+! Anti-aliasing
+Xft.lcdfilter: lcddefault
 
 
 !!Source http://github.com/altercation/solarized
