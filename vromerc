@@ -50,4 +50,4 @@ set qm_r=::javascript::CustomMark.readLater();
 " vim: set ft=vim:
 
 " Customize hintkeys
-`set hintkeys=niehtrsadwplu`
+set hintkeys=niehtrsadwplu
