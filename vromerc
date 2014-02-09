@@ -31,7 +31,7 @@ set searchengines={"google":"http://www.google.com/search?q={{keyword}}", "yahoo
 set searchengines+={"baidu":"http://www.baidu.com/s?wd={{keyword}}"}
 
 " Change default search engine, default is google.
-set defaultsearch=yahoo
+set defaultsearch=google
 
 " Disable autocomplete
 set noautocomplete
