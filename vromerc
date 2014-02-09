@@ -48,3 +48,6 @@ set qm_hn=http://news.ycombinator.com
 " custom quick mark triggering JS (view below)
 set qm_r=::javascript::CustomMark.readLater();
 " vim: set ft=vim:
+
+" Customize hintkeys
+`set hintkeys=hiehtrsaddwplu`
