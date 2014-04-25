@@ -1,13 +1,26 @@
+#set-option -g default-shell /opt/swt/bin/bash
 #set-option -g default-command bash
 #unbind-key -a
 unbind C-b
-set -g prefix C-a
+#set -g prefix C-a
+#set -g prefix C-t
+#unbind C-b
+#set -g prefix  m-a
+set -g prefix  C-t
 
 set -g base-index 1
 set -g pane-base-index 1
 set -g renumber-windows on
 
 set -sg escape-time 1
+
+#Make mouse useful in copy mode
+setw -g mode-mouse on
+
+#Allow mouse to select which pane to use
+set -g mouse-select-pane on
+set -g mouse-select-window on
+
 
 #start tmux with my current environment
 set-option -ga update-environment ' DISPLAY'
@@ -26,6 +39,8 @@ set -g visual-activity on
 
 setw -g automatic-rename off
 
+#prevent 2 open sessions from syncing their sizes
+setw -g aggressive-resize on
 
 #set -g default-terminal "xterm-256color"
 set -g default-terminal "rxvt-256color"
@@ -45,8 +60,8 @@ set-window-option -g mode-keys vi
 bind h select-pane -L
 bind j select-pane -D
 bind k select-pane -U
-#bind l select-pane -R
-#bind l last-window
+bind l select-pane -R
+bind u last-window
 
 bind-key -n M-NPage  swap-window -t -1
 bind-key -n M-PPage swap-window -t +1
@@ -59,8 +74,8 @@ bind-key z resize-pane -Z \; display-message "Zoom zoom zoom"
 
 set -g history-limit 50000
 
-set -g bell-action current
-set -g bell-on-alert on
+set -g bell-action none
+set -g bell-on-alert off
 
 set -g display-panes-time 2000
 
@@ -97,17 +112,17 @@ bind-key -r C-d detach-client
 
 # default statusbar colors
 set-window-option -g status-left "{#{session_name}} [#{host}]"
-set-window-option -g status-left-length 50
+set-window-option -g status-left-length 40
 set-window-option -g status-left-fg colour14
 set-window-option -g status-left-bg black
 
 # default window title colors
-set-window-option -g window-status-fg yellow #colour244 #base0
+set-window-option -g window-status-fg red #colour244 #base0
 set-window-option -g window-status-bg default
 set-window-option -g window-status-attr dim
 
-set-window-option -g status-right "#T [%H:%M:%S] [%m/%d/%y]"
-set-window-option -g status-right-length 50
+set-window-option -g status-right " #[fg=red,bold] #(cat ~/.tmuxAlert) #[fg=colour14] #T [%H:%M:%S] [%m/%d/%y]"
+set-window-option -g status-right-length 60
 set-window-option -g status-right-fg colour14
 set-window-option -g status-right-bg black
 
