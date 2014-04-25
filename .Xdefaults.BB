@@ -1,4 +1,3 @@
-!
 #ifdef COLOR
 ?*Background: lightSteelBlue
 *Background: lightSteelBlue
@@ -28,7 +27,9 @@ rxvtop*foreground:Yellow
 rxvtop2*background:Black
 rxvtop2*foreground:Green
 
-
+!URxvt.colorIT:      #87af5f
+!URxvt.colorBD:      #d7d7d7
+!URxvt.colorUL:      #87afd7
 
 
 !-------------------------------------------------------------------------------
@@ -54,7 +55,7 @@ URxvt.intensityStyles:      false
 !URxvt.termName:             xterm-256color
 URxvt.termName:             rxvt-256color
 URxvt.depth:                32
-URxvt.geometry:             160x30
+URxvt.geometry:             160x130
 URxvt.transparent:          false
 URxvt.fading:               0
 URxvt.urgentOnBell:         true
@@ -63,20 +64,25 @@ URxvt.loginShell:           true
 URxvt.saveLines:            12000
 URxvt.internalBorder:       3
 URxvt.lineSpace:            0
+URxvt.meta8:                false
+URxvt.eightBitInput:        false
+URxvt*eightBitInput: false
+URxvt*altSendsEscape: true
+URxvt*meta: ignore
 
 ! Fonts
 
 ! bitmap fonts
 !
-URxvt.font: -misc-fixed-medium-r-normal-*-35-140-75-75-c-90-iso8859-1
-!Rxvt.font: *-fixed-*-*-*-20-*\007
+!URxvt.font: -misc-fixed-medium-r-normal-*-35-140-75-75-c-90-iso8859-1
+!URxvt.font: *-fixed-*-*-*-20-*\007
 !URxvt.font: 9x15
 !URxvt.font: 9x15bold
 
 
 ! Xft fonts
 !
-!URxvt*font:     *-fixed-*-*-*-14-*
+URxvt*font:     *-fixed-*-*-*-20-*
 !URxvt*font:     *-terminus-*-*-*-14-*
 !URxvt.font: xft:Arial:bold:size=10
 
@@ -135,6 +141,7 @@ URxvt.urlLauncher:          firefox
 ! URxvt.keysym.C-S-Up:   perl:font-size:incglobal
 ! URxvt.keysym.C-S-Down: perl:font-size:decglobal
 
+
 ! Scrollbar
 !URxvt.scrollStyle:          rxvt
 URxvt.scrollstyle:          plain
@@ -165,9 +172,11 @@ URxvt.keysym.Control-Tab: \033[27;5;9~
 
 URxvt.keysym.Control-Up:     \033[1;5A
 URxvt.keysym.Control-Down:   \033[1;5B
-!URxvt.keysym.Control-Left:   \033[1;5D
-!URxvt.keysym.Control-Right:  \033[1;5C
+URxvt.keysym.Control-Left:   \033[1;5D
+URxvt.keysym.Control-Right:  \033[1;5C
 
+URxvt.iso14755: false
+URxvt.iso14755_52: false
 ! Bell
 
 !URxvt.urgentOnBell: true
@@ -335,4 +344,4 @@ Rxvt.color15 : #FFFFFF
 !urxvt.color12:    #b6defb
 !urxvt.color13:    #fba1fb
 !urxvt.color14:    #d7d9fc
-!
+!urxvt.color15:    #e2e2e2
