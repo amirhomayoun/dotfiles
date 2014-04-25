@@ -31,6 +31,8 @@ if $DISPLAY =~ '\(\(cos\|scs\)\d\+nai\d\+\)\|\(spkpc\d\+\)\|\(tc-garyjohn\)'
     set clipboard=autoselect,exclude:.* 
 endif 
 set clipboard=exclude:*
+set lazyredraw
+
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " 02. Events                                                                 "
@@ -156,12 +158,18 @@ fixdel
 "This unsets the last search pattern register by hitting return
 nnoremap <CR> :noh<CR><CR>
 
+"Moving to another split
+nnoremap <Leader>w <C-w>w
+
 "For omnicppcomplete
 set nocp
 filetype plugin on
 
 "Use F4 to switch between source and heade (cpp and h)
 map <F4> :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
+
+"Use <F6> to switch to the next split
+:map <F6> <C-W>w
 
 set ttyfast
 
@@ -235,37 +243,105 @@ autocmd BufEnter * :syntax sync fromstart
 ""
 "" FuzzyFinder key mappings 
 ""
+"for vim
+hi Pmenu ctermbg=red  
 
 let g:fuf_modesDisable = []
 let g:fuf_mrufile_maxItem = 1000
 let g:fuf_mrucmd_maxItem = 400
-let g:fuf_mrufile_exclude = '\v\~$|\.(bak|sw[po])$|^(\/\/|\\\\|\/mnt\/)'
-nnoremap <silent> <C-n>      :FufBuffer<CR>
-nnoremap <silent> <C-p>      :FufFileWithCurrentBufferDir<CR>
-nnoremap <silent> <C-f><C-p> :FufFileWithFullCwd<CR>
-nnoremap <silent> <C-f>p     :FufFile **/<CR>
+let g:fuf_mrufile_exclude = '\v\~$|\.(o|d|bak|tsk|sw[po])$|^(\/\/|\\\\|\/mnt\/)'
+"nnoremap <silent> <C-n>      :FufBuffer<CR>
+nnoremap <silent> <Leader>n      :FufBuffer<CR>
+"nnoremap <silent> <C-p>      :FufFileWithCurrentBufferDir<CR>
+nnoremap <silent> <Leader>p      :FufFileWithCurrentBufferDir<CR>
+"nnoremap <silent> <C-f><C-p> :FufFileWithFullCwd<CR>
+nnoremap <silent> <Leader>f<Leader>p :FufFileWithFullCwd<CR>
 "nnoremap <silent> <C-f>p     :FufFile<CR>
-nnoremap <silent> <C-f><C-d> :FufDirWithCurrentBufferDir<CR>
-nnoremap <silent> <C-f>d     :FufDirWithFullCwd<CR>
-nnoremap <silent> <C-f>D     :FufDir<CR>
-nnoremap <silent> <C-j>      :FufMruFile<CR>
-nnoremap <silent> <C-k>      :FufMruCmd<CR>
-nnoremap <silent> <C-b>      :FufBookmarkDir<CR>
-nnoremap <silent> <C-f><C-t> :FufTag<CR>
-nnoremap <silent> <C-f>t     :FufTag!<CR>
+"nnoremap <silent> <C-f>p     :FufFile **/<CR>
+nnoremap <silent> <Leader>fp     :FufFile **/<CR>
+"nnoremap <silent> <C-f><C-d> :FufDirWithCurrentBufferDir<CR>
+nnoremap <silent> <Leader>f<Leader>d :FufDirWithCurrentBufferDir<CR>
+"nnoremap <silent> <C-f>d     :FufDirWithFullCwd<CR>
+nnoremap <silent> <Leader>fd     :FufDirWithFullCwd<CR>
+"nnoremap <silent> <C-f>D     :FufDir<CR>
+nnoremap <silent> <Leader>fD     :FufDir<CR>
+"nnoremap <silent> <C-j>      :FufMruFile<CR>
+nnoremap <silent> <Leader>j      :FufMruFile<CR>
+"nnoremap <silent> <C-k>      :FufMruCmd<CR>
+nnoremap <silent> <Leader>k      :FufMruCmd<CR>
+"nnoremap <silent> <C-b>      :FufBookmarkDir<CR>
+nnoremap <silent> <Leaedr>b      :FufBookmarkDir<CR>
+"nnoremap <silent> <C-f><C-t> :FufTag<CR>
+nnoremap <silent> <Leader>f<Leader>t :FufTag<CR>
+"nnoremap <silent> <C-f>t     :FufTag!<CR>
+nnoremap <silent> <Leader>ft     :FufTag!<CR>
 noremap  <silent> g]         :FufTagWithCursorWord!<CR>
-nnoremap <silent> <C-f><C-f> :FufTaggedFile<CR>
-nnoremap <silent> <C-f><C-j> :FufJumpList<CR>
-nnoremap <silent> <C-f><C-g> :FufChangeList<CR>
-nnoremap <silent> <C-f><C-q> :FufQuickfix<CR>
-nnoremap <silent> <C-f><C-l> :FufLine<CR>
-nnoremap <silent> <C-f><C-h> :FufHelp<CR>
-nnoremap <silent> <C-f><C-b> :FufAddBookmark<CR>
-vnoremap <silent> <C-f><C-b> :FufAddBookmarkAsSelectedText<CR>
-nnoremap <silent> <C-f><C-e> :FufEditInfo<CR>
-nnoremap <silent> <C-f><C-r> :FufRenewCache<CR>
+"nnoremap <silent> <C-f><C-f> :FufTaggedFile<CR>
+nnoremap <silent> <Leader>f<Leader>f :FufTaggedFile<CR>
+"nnoremap <silent> <C-f><C-j> :FufJumpList<CR>
+nnoremap <silent> <Leader>f<Leader>j :FufJumpList<CR>
+"nnoremap <silent> <C-f><C-g> :FufChangeList<CR>
+nnoremap <silent> <Leader>f<Leader>g :FufChangeList<CR>
+"nnoremap <silent> <C-f><C-q> :FufQuickfix<CR>
+nnoremap <silent> <Leader>f<Leader>q :FufQuickfix<CR>
+"nnoremap <silent> <C-f><C-l> :FufLine<CR>
+nnoremap <silent> <Leader>f<Leader>l :FufLine<CR>
+"nnoremap <silent> <C-f><C-h> :FufHelp<CR>
+nnoremap <silent> <Leader>f<Leader>h :FufHelp<CR>
+"vnoremap <silent> <C-f><C-b> :FufAddBookmarkAsSelectedText<CR>
+nnoremap <silent> <Leader>f<Leader>b :FufBookmarkFileAdd<CR>
+"nnoremap <silent> <C-f><C-e> :FufEditInfo<CR>
+nnoremap <silent> <Leader>f<Leader>e :FufEditDataFile<CR>
+"nnoremap <silent> <C-f><C-r> :FufRenewCache<CR>
+nnoremap <silent> <Leader>f<Leader>r :FufRenewCache<CR>
 
 nmap <F11> :!find . -iname '*.c' -o -iname '*.cpp' -o -iname '*.h' -o -iname '*.hpp' > cscope.files ;
           \:!cscope -b -i cscope.files -f cscope.out<CR>
           \:cs kill -1<CR>:cs add cscope.out<CR>
-source ~/.vim/bundle/cscope_macros/cscope_macros.vim 
+
+" Taglist keybindings
+nnoremap <silent> <F8> :TlistToggle<CR>
+nnoremap <silent> <F9> :TlistOpen<CR>
+
+source ~/.vim/bundle/cscope_macros/cscope_macros.vim
+
+" Search for selected text, forwards or backwards.
+vnoremap <silent> * :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy/<C-R><C-R>=substitute(
+  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+vnoremap <silent> # :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy?<C-R><C-R>=substitute(
+  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+
+" mapping case conversion keys
+if (&tildeop)
+  nmap gcw guw~l
+  nmap gcW guW~l
+  nmap gciw guiw~l
+  nmap gciW guiW~l
+  nmap gcis guis~l
+  nmap gc$ gu$~l
+  nmap gcgc guu~l
+  nmap gcc guu~l
+  vmap gc gu~l
+else
+  nmap gcw guw~h
+  nmap gcW guW~h
+  nmap gciw guiw~h
+  nmap gciW guiW~h
+  nmap gcis guis~h
+  nmap gc$ gu$~h
+  nmap gcgc guu~h
+  nmap gcc guu~h
+  vmap gc gu~h
+endif
+
+
+
+" let g:airline_theme='serene'
+ let g:airline_theme='murmur'
+" let g:airline_theme='badwolf'
