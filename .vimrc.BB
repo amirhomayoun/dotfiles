@@ -10,6 +10,8 @@
 "   03. Theme/Colors ............ Colors, fonts, etc.                        "
 "   04. Vim UI .................. User interface behavior                    "
 "   05. Text Formatting/Layout .. Text, tab, indentation related             "
+"   06. Key mappings 
+"   07. Plugins...................Plugin specific settings                   "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
@@ -21,8 +23,6 @@ set so =10
 set term=xterm-256color  " set term
 "set relativenumber  
 set visualbell
-noremap <expr> k ((line('.')==1)?'':'k')
-noremap <expr> j ((line('.')==line('$'))?'':'j')
 set noerrorbells
 set novisualbell
 "Slow start up of vim because of accessing X clipboard
@@ -32,7 +32,21 @@ if $DISPLAY =~ '\(\(cos\|scs\)\d\+nai\d\+\)\|\(spkpc\d\+\)\|\(tc-garyjohn\)'
 endif 
 set clipboard=exclude:*
 set lazyredraw
+set ttyfast
 
+if has('mouse')
+    set mouse=a
+endif
+
+"For omnicppcomplete
+set nocp
+
+set backspace=indent,eol,start
+set t_kb= 
+fixdel
+let g:pymode_paths=['/home/asadough/bin/Python-2.6.2']
+
+set diffopt+=iwhite
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " 02. Events                                                                 "
@@ -55,9 +69,7 @@ set omnifunc=syntaxcomplete#Complete
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set t_Co=256              " enable 256-color mode.
 syntax enable             " enable syntax highlighting (previously syntax on).
-"color desert       " set colorscheme
-color delek       " set colorscheme
-"color elflord       " set colorscheme
+color molokai       " set colorscheme
 
 " Prettify JSON files
 "autocmd BufRead,BufNewFile *.json set filetype=json
@@ -91,20 +103,20 @@ set incsearch             " But do highlight as you type your search.
 set smartcase
 set ruler                 " Always show info along bottom.
 set showmatch
-set statusline=%<%f\%h%m%r%=%-20.(line=%l\ \ col=%c%V\ \ totlin=%L%)\ \ \%h%m%r%=%-40(bytval=0x%B,%n%Y%)\%P
-set statusline=
-set statusline +=%1*\ %n\ %*            "buffer number
-set statusline +=%5*%{&ff}%*            "file format
-set statusline +=%3*%y%*                "file type
-set statusline +=%4*\ %<%F%*            "full path
-set statusline +=%2*%m%*                "modified flag
-set statusline +=%1*%=%5l%*             "current line
-set statusline +=%2*/%L%*               "total lines
-set statusline +=%1*%4v\ %*             "virtual column number
-set statusline +=%2*0x%04B\ %*          "character under cursor
+"set statusline=%<%f\%h%m%r%=%-20.(line=%l\ \ col=%c%V\ \ totlin=%L%)\ \ \%h%m%r%=%-40(bytval=0x%B,%n%Y%)\%P
+"set statusline=
+"set statusline +=%1*\ %n\ %*            "buffer number
+"set statusline +=%5*%{&ff}%*            "file format
+"set statusline +=%3*%y%*                "file type
+"set statusline +=%4*\ %<%F%*            "full path
+"set statusline +=%2*%m%*                "modified flag
+"set statusline +=%1*%=%5l%*             "current line
+"set statusline +=%2*/%L%*               "total lines
+"set statusline +=%1*%4v\ %*             "virtual column number
+"set statusline +=%2*0x%04B\ %*          "character under cursor
 
 " default the statusline to green when entering Vim
-hi statusline guibg=DarkGrey ctermfg=8 guifg=White ctermbg=15
+" hi statusline guibg=DarkGrey ctermfg=8 guifg=White ctermbg=15
 
 hi User1 guifg=#eea040 guibg=#222222
 hi User2 guifg=#dd3333 guibg=#222222
@@ -133,118 +145,116 @@ set shiftwidth=4          " indent/outdent by 4 columns
 set shiftround            " always indent/outdent to the nearest tabstop
 set expandtab             " use spaces instead of tabs
 set smarttab              " use tabs at the start of a line, spaces elsewhere
-set wrap                " don't wrap text
+set wrap                  " don't wrap text
 set textwidth=80
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" 06. Misc
+" 06. Key mappings
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:miniBufExplMapWindowNavVim = 1        "minibufexplorer 
-let g:miniBufExplMapWindowNavArrows = 1     "minibufexplorer 
-let g:miniBufExplMapCTabSwitchBufs = 1      "minibufexplorer 
-let g:miniBufExplModSelTarget = 1           "minibufexplorer  
+noremap <expr> k ((line('.')==1)?'':'k')
+noremap <expr> j ((line('.')==line('$'))?'':'j')
+"let mapleader="\"
 
-"map <F2> :ls<CR>:b<Space>           "swich buffers
-set tags=tags;/                     "ctag
+"copy/paste to external clipboard
+nnoremap <silent> <C-c> maggvG$"+y'a
 
-"if has('mouse')
-"    set mouse=a
-"endif
-"
-
-set backspace=indent,eol,start
-set t_kb= 
-fixdel
 "This unsets the last search pattern register by hitting return
 nnoremap <CR> :noh<CR><CR>
 
 "Moving to another split
 nnoremap <Leader>w <C-w>w
 
-"For omnicppcomplete
-set nocp
-filetype plugin on
+"map <F2> :ls<CR>:b<Space>           "swich buffers
 
 "Use F4 to switch between source and heade (cpp and h)
 map <F4> :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
+map <F5> :e %:p:s,.h$,.X123X,:s,.c$,.h,:s,.X123X$,.c,<CR>
 
 "Use <F6> to switch to the next split
 :map <F6> <C-W>w
 
-set ttyfast
-
 " Use jj instead of Esc
-
 imap jj <Esc>
 set timeoutlen=500
 
-" Status bar color
-"
-function! InsertStatuslineColor(mode)
-    if a:mode == 'i'
-        hi statusline guibg=Cyan ctermfg=6 guifg=Black ctermbg=0
-    elseif a:mode == 'r'
-        hi statusline guibg=Purple ctermfg=5 guifg=Black ctermbg=0
-    else
-        hi statusline guibg=DarkRed ctermfg=1 guifg=Black ctermbg=0
-    endif
-endfunction
+"map * *n 
+"map # *N 
+nnoremap * :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
+nnoremap # :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
+map N Nzz
+map n nzz
 
-au InsertEnter * call InsertStatuslineColor(v:insertmode)
-"au InsertLeave * hi statusline guibg=DarkGrey ctermfg=8 guifg=White ctermbg=15
-au InsertLeave * hi statusline guibg=Green ctermfg=8 guifg=White ctermbg=15
+nmap <F11> :!ctags -R .&<CR>
+          \:!find . -iname "*.c" -o -iname "*.cpp" -o -iname "*.h" -o -iname "*.hpp" > cscope.files&<CR>
+          \:!cscope -b -i cscope.files -f cscope.out<CR>
+          \:cscope kill -1<CR>
+          \:cscope add cscope.out<CR>
 
-" default the statusline to green when entering
-"Vim
-hi statusline guibg=DarkGrey ctermfg=8
+" Taglist keybindings
+nnoremap <silent> <F8> :TlistToggle<CR>
+nnoremap <silent> <F9> :TlistOpen<CR>
+
+" Use ctrl-[hjkl] to select the active split!
+nmap <silent> <c-k> :wincmd k<CR>
+nmap <silent> <c-j> :wincmd j<CR>
+nmap <silent> <c-h> :wincmd h<CR>
+nmap <silent> <c-l> :wincmd l<CR>
+
+vnoremap <leader>t :Tabular<space>/
+
+" Search for selected text, forwards or backwards.
+vnoremap <silent> * :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy/<C-R><C-R>=substitute(
+  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+vnoremap <silent> # :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy?<C-R><C-R>=substitute(
+  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 07. Plugins
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"let g:miniBufExplMapWindowNavVim = 1        "minibufexplorer 
+"let g:miniBufExplMapWindowNavArrows = 1     "minibufexplorer 
+"let g:miniBufExplMapCTabSwitchBufs = 1      "minibufexplorer 
+"let g:miniBufExplModSelTarget = 1           "minibufexplorer  
+
 autocmd BufEnter * :syntax sync fromstart
 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""" Fugitive
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"Clean fugitive buffers after checking git objects
+autocmd BufReadPost fugitive://* set bufhidden=delete
+"Add git branch name to status
+set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
 
-"guifg=White ctermbg=15
+nnoremap <Leader>ga :Git add %:p<CR><CR>
+nnoremap <Leader>gs :Gstatus<CR>
+nnoremap <Leader>gc :Gcommit -v -q<CR>
+nnoremap <Leader>gt :Gcommit -v -q %:p<CR>
+nnoremap <Leader>gd :Gdiff<CR>
+nnoremap <Leader>gb :Gblame<CR>
+nnoremap <Leader>gl :silent! Glog<CR>:bot copen<CR>
+"nnoremap <Leader>gL :exe ':!cd ' . expand('%:p:h') . '; git la'<CR>
+"nnoremap <Leader>gl :exe ':!cd ' . expand('%:p:h') . '; git las'<CR>
+"nnoremap <Leader>gh :Silent Glog<CR>
+"nnoremap <Leader>gH :Silent Glog<CR>:set nofoldenable<CR>
+"Gread is dangerous in my opinion, will disable it for now
+"nnoremap <Leader>gr :Gread<CR>
+nnoremap <Leader>gw :Gwrite<CR>
+nnoremap <Leader>gp :Ggrep<Space>
+nnoremap <Leader>go :Git checkout<Space>
+nnoremap <Leader>g- :Silent Git stash<CR>:e<CR>
+nnoremap <Leader>g+ :Silent Git stash pop<CR>:e<CR>
 
-" Formats the statusline
-"set statusline=%f   " file name
-"set statusline+=[%{strlen(&fenc)?&fenc:'none'},
-"file encoding
-"set statusline+=%{&ff}] "file format
-"set statusline+=%y      "filetype
-"set statusline+=%h      "help file flag
-"set statusline+=%m      "modified flag
-"set statusline+=%r      "read only flag
-
-" Puts in the current git status
-"if count(g:pathogen_disabled, 'Fugitive')
-"    < 1   
-"    set
-"    statusline+=%{fugitive#statusline()}
-"endif
-
-" Puts in syntastic warnings
-"if count(g:pathogen_disabled,
-"    'Syntastic') < 1  
-"    set
-"    statusline+=%#warningmsg#
-"    set
-"    statusline+=%{SyntasticStatuslineFlag()}
-"    set
-"    statusline+=%*
-"endif
-"set statusline+=\ %=                        " align left
-"set statusline+=Line:%l/%L[%p%%]            " line X of Y [percent of file]
-"set statusline+=\ Col:%c                    " current column
-"set statusline+=\ Buf:%n                    " Buffer number
-"set statusline+=\ [%b][0x%B]\               " ASCII and byte code under cursor
-"if $COLORTERM == 'urxvt'
-"      set t_Co=256
-"  endif
-
-
-
-""
-"" FuzzyFinder key mappings 
-""
-"for vim
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""" FuzzyFinder
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 hi Pmenu ctermbg=red  
+hi Pmenu ctermfg=black  
 
 let g:fuf_modesDisable = []
 let g:fuf_mrufile_maxItem = 1000
@@ -270,7 +280,7 @@ nnoremap <silent> <Leader>j      :FufMruFile<CR>
 "nnoremap <silent> <C-k>      :FufMruCmd<CR>
 nnoremap <silent> <Leader>k      :FufMruCmd<CR>
 "nnoremap <silent> <C-b>      :FufBookmarkDir<CR>
-nnoremap <silent> <Leaedr>b      :FufBookmarkDir<CR>
+nnoremap <silent> <Leader>b      :FufBookmarkDir<CR>
 "nnoremap <silent> <C-f><C-t> :FufTag<CR>
 nnoremap <silent> <Leader>f<Leader>t :FufTag<CR>
 "nnoremap <silent> <C-f>t     :FufTag!<CR>
@@ -295,29 +305,35 @@ nnoremap <silent> <Leader>f<Leader>e :FufEditDataFile<CR>
 "nnoremap <silent> <C-f><C-r> :FufRenewCache<CR>
 nnoremap <silent> <Leader>f<Leader>r :FufRenewCache<CR>
 
-nmap <F11> :!find . -iname '*.c' -o -iname '*.cpp' -o -iname '*.h' -o -iname '*.hpp' > cscope.files ;
-          \:!cscope -b -i cscope.files -f cscope.out<CR>
-          \:cs kill -1<CR>:cs add cscope.out<CR>
 
-" Taglist keybindings
-nnoremap <silent> <F8> :TlistToggle<CR>
-nnoremap <silent> <F9> :TlistOpen<CR>
-
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""" Cscope
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set tags=tags;/                     "ctag
 source ~/.vim/bundle/cscope_macros/cscope_macros.vim
 
-" Search for selected text, forwards or backwards.
-vnoremap <silent> * :<C-U>
-  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-  \gvy/<C-R><C-R>=substitute(
-  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-  \gV:call setreg('"', old_reg, old_regtype)<CR>
-vnoremap <silent> # :<C-U>
-  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-  \gvy?<C-R><C-R>=substitute(
-  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-  \gV:call setreg('"', old_reg, old_regtype)<CR>
+"This will help Vim use cscope more efficiently
+if has('cscope')
+  set cscopetag cscopeverbose
 
-" mapping case conversion keys
+  if has('quickfix')
+    set cscopequickfix=s-,c-,d-,i-,t-,e-
+  endif
+
+  cnoreabbrev csa cs add
+  cnoreabbrev csf cs find
+  cnoreabbrev csk cs kill
+  cnoreabbrev csr cs reset
+  cnoreabbrev css cs show
+  cnoreabbrev csh cs help
+
+  command -nargs=0 Cscope cs add $VIMSRC/src/cscope.out $VIMSRC/src
+endif
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""" Upper/Lower case: mapping case conversion keys
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if (&tildeop)
   nmap gcw guw~l
   nmap gcW guW~l
@@ -342,6 +358,119 @@ endif
 
 
 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""" Airline theme
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " let g:airline_theme='serene'
- let g:airline_theme='murmur'
 " let g:airline_theme='badwolf'
+let g:airline_theme='murmur'
+
+let g:snipMate = {}
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""" Startify
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+    let g:startify_files_number        = 8
+    let g:startify_session_persistence = 1
+    let g:startify_session_autoload    = 1
+    let g:startify_enable_special      = 0
+
+    let g:startify_list_order = [
+          \ ['   LRU:'],
+          \ 'files',
+          \ ['   Sessions:'],
+          \ 'sessions',
+          \ ['   Bookmarks:'],
+          \ 'bookmarks',
+          \ ]
+
+    let g:startify_skiplist = [
+                \ 'COMMIT_EDITMSG',
+                \ $VIMRUNTIME .'/doc',
+                \ 'bundle/.*/doc',
+                \ '.vimgolf',
+                \ ]
+
+    let g:startify_bookmarks = [
+                \ '~/.vimrc',
+                \ '~/.tmux.conf',
+                \ '~/.profile',
+                \ ]
+
+    let g:startify_custom_footer =
+          \ ['', "   Vim is charityware. Please read ':help uganda'.", '']
+
+    "let g:startify_custom_header =
+    "      \ map(split(system('tips | cowsay -f apt'), '\n'), '"   ". v:val') + ['']
+    let g:startify_custom_header1 = [
+                \'                                                                                     bbbbbbbb                                                                        ',
+                \'BBBBBBBBBBBBBBBBB   lllllll                                                          b::::::b                                                                        ',
+                \'B::::::::::::::::B  l:::::l                                                          b::::::b                                                                        ',
+                \'B::::::BBBBBB:::::B l:::::l                                                          b::::::b                                                                        ',
+                \'BB:::::B     B:::::Bl:::::l                                                           b:::::b                                                                        ',
+                \'  B::::B     B:::::B l::::l    ooooooooooo      ooooooooooo      mmmmmmm    mmmmmmm   b:::::bbbbbbbbb        eeeeeeeeeeee    rrrrr   rrrrrrrrr      ggggggggg   ggggg',
+                \'  B::::B     B:::::B l::::l  oo:::::::::::oo  oo:::::::::::oo  mm:::::::m  m:::::::mm b::::::::::::::bb    ee::::::::::::ee  r::::rrr:::::::::r    g:::::::::ggg::::g',
+                \'  B::::BBBBBB:::::B  l::::l o:::::::::::::::oo:::::::::::::::om::::::::::mm::::::::::mb::::::::::::::::b  e::::::eeeee:::::eer:::::::::::::::::r  g:::::::::::::::::g',
+                \'  B:::::::::::::BB   l::::l o:::::ooooo:::::oo:::::ooooo:::::om::::::::::::::::::::::mb:::::bbbbb:::::::be::::::e     e:::::err::::::rrrrr::::::rg::::::ggggg::::::gg',
+                \'  B::::BBBBBB:::::B  l::::l o::::o     o::::oo::::o     o::::om:::::mmm::::::mmm:::::mb:::::b    b::::::be:::::::eeeee::::::e r:::::r     r:::::rg:::::g     g:::::g ',
+                \'  B::::B     B:::::B l::::l o::::o     o::::oo::::o     o::::om::::m   m::::m   m::::mb:::::b     b:::::be:::::::::::::::::e  r:::::r     rrrrrrrg:::::g     g:::::g ',
+                \'  B::::B     B:::::B l::::l o::::o     o::::oo::::o     o::::om::::m   m::::m   m::::mb:::::b     b:::::be::::::eeeeeeeeeee   r:::::r            g:::::g     g:::::g ',
+                \'  B::::B     B:::::B l::::l o::::o     o::::oo::::o     o::::om::::m   m::::m   m::::mb:::::b     b:::::be:::::::e            r:::::r            g::::::g    g:::::g ',
+                \'BB:::::BBBBBB::::::Bl::::::lo:::::ooooo:::::oo:::::ooooo:::::om::::m   m::::m   m::::mb:::::bbbbbb::::::be::::::::e           r:::::r            g:::::::ggggg:::::g ',
+                \'B:::::::::::::::::B l::::::lo:::::::::::::::oo:::::::::::::::om::::m   m::::m   m::::mb::::::::::::::::b  e::::::::eeeeeeee   r:::::r             g::::::::::::::::g ',
+                \'B::::::::::::::::B  l::::::l oo:::::::::::oo  oo:::::::::::oo m::::m   m::::m   m::::mb:::::::::::::::b    ee:::::::::::::e   r:::::r              gg::::::::::::::g ',
+                \'BBBBBBBBBBBBBBBBB   llllllll   ooooooooooo      ooooooooooo   mmmmmm   mmmmmm   mmmmmmbbbbbbbbbbbbbbbb       eeeeeeeeeeeeee   rrrrrrr                gggggggg::::::g ',
+                \'                                                                                                                                                             g:::::g ',
+                \'                                                                                                                                                 gggggg      g:::::g ',
+                \'                                                                                                                                                 g:::::gg   gg:::::g ',
+                \'                                                                                                                                                  g::::::ggg:::::::g ',
+                \'                                                                                                                                                   gg:::::::::::::g  ',
+                \'                                                                                                                                                     ggg::::::ggg    ',
+                \'                                                                                                                                                        gggggg     ',
+                \]
+
+    let g:startify_custom_header = [
+                \'',
+                \'888888b.   888                                 888                                ',
+                \'888  "88b  888                                 888                                ',
+                \'888  .88P  888                                 888                                ',
+                \'8888888K.  888  .d88b.   .d88b.  88888b.d88b.  88888b.   .d88b.  888d888  .d88b.  ',
+                \'888  "Y88b 888 d88""88b d88""88b 888 "888 "88b 888 "88b d8P  Y8b 888P"   d88P"88b ',
+                \'888    888 888 888  888 888  888 888  888  888 888  888 88888888 888     888  888 ',
+                \'888   d88P 888 Y88..88P Y88..88P 888  888  888 888 d88P Y8b.     888     Y88b 888 ',
+                \'8888888P"  888  "Y88P"   "Y88P"  888  888  888 88888P"   "Y8888  888      "Y88888 ',
+                \'                                                                              888 ',
+                \'                                                                         Y8b d88P ',
+                \'                                                                          "Y88P"  ',
+                \]
+                                                                                                                                   
+    hi StartifyBracket ctermfg=240
+    hi StartifyNumber  ctermfg=215
+    hi StartifyPath    ctermfg=245
+    hi StartifySlash   ctermfg=240
+    hi StartifySpecial ctermfg=240
+    hi StartifyHeader  ctermfg=114
+    hi StartifyFooter  ctermfg=240
+    "hi StartifyFile    ctermfg=111
+    "source /bbsrc/princeton/skunk/vim/cursor.vim
+
+    " EasyGrep default search is in buffers
+    let g:EasyGrepMode = 1
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""SemanticHighlight
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let s:semanticGUIColors = [ '#72d572', '#c5e1a5', '#e6ee9c', '#fff59d', '#ffe082', '#ffcc80', '#ffab91', '#bcaaa4', '#b0bec5', '#ffa726', '#ff8a65', '#f9bdbb', '#f9bdbb', '#f8bbd0', '#e1bee7', '#d1c4e9', '#ffe0b2', '#c5cae9', '#d0d9ff', '#b3e5fc', '#b2ebf2', '#b2dfdb', '#a3e9a4', '#dcedc8' , '#f0f4c3', '#ffb74d' ]
+
+"Check http://img1.wikia.nocookie.net/__cb20110121055231/vim/images/1/16/Xterm-color-table.png
+"let g:semanticTermColors = [28,1,2,3,4,5,6,7,25,9,10,34,12,13,14,15,16,125,124,19]
+let g:semanticTermColors = [28,1,2,3,5,6,7,9,10,34,13,14,15,125,124,57,153,21]
+nnoremap <Leader>s :SemanticHighlightToggle<cr>
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""YouCompleteMe
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:ycm_global_ycm_extra_conf = '/home/asadough/.vim/ycm_extra_conf.py'
+"let g:syntastic_cpp_checkers = ['plink']
+"let g:syntastic_cpp_include_dirs = ['bidea_utils/', 'bidea_utils/shared_xsds', 'btmsgsvc/src', '/bbsrc']
