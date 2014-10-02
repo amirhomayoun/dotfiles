@@ -32,10 +32,12 @@ bind-key -t vi-copy 'y' copy-selection      # Yank selection in copy mode.
 
 #bind -t vi-copy v begin-selection
 #bind -t vi-copy y copy-selection
-bind -t vi-copy Escape cancel
+#bind -t vi-copy Escape cancel
 
 setw -g monitor-activity on
-set -g visual-activity on  
+set -g visual-activity off  
+set -g monitor-content 'hi'
+
 
 setw -g automatic-rename off
 
@@ -98,12 +100,13 @@ set-window-option -g window-status-current-fg default
 set-window-option -g window-status-current-bg default
 set-window-option -g window-status-current-attr "reverse"
 
+
 set -g status-interval 1
 
 #Bell colors
-setw -g window-status-bell-attr    reverse,bold
-setw -g window-status-bell-bg      red
-setw -g window-status-bell-fg      green
+#setw -g window-status-bell-attr    reverse,bold
+#setw -g window-status-bell-bg      red
+#setw -g window-status-bell-fg      green
 
 #screen compatibility
 bind-key A command-prompt "rename-window '%%'"
@@ -111,8 +114,9 @@ bind-key -r C-c new-window
 bind-key -r C-d detach-client
 
 # default statusbar colors
-set-window-option -g status-left "{#{session_name}} [#{host}]"
-set-window-option -g status-left-length 40
+#set-window-option -g status-left "{#{session_name}} [#{host}]"
+set-window-option -g status-left "{#{session_name}}"
+set-window-option -g status-left-length 30
 set-window-option -g status-left-fg colour14
 set-window-option -g status-left-bg black
 
@@ -121,8 +125,8 @@ set-window-option -g window-status-fg red #colour244 #base0
 set-window-option -g window-status-bg default
 set-window-option -g window-status-attr dim
 
-set-window-option -g status-right " #[fg=red,bold] #(cat ~/.tmuxAlert) #[fg=colour14] #T [%H:%M:%S] [%m/%d/%y]"
-set-window-option -g status-right-length 60
+set-window-option -g status-right " #[fg=red,bold] #(cat ~/.tmuxAlertStart)  #[fg=green,bold] #(cat ~/.tmuxAlertStop) #[fg=colour14] #T [%H:%M:%S] [%m/%d/%y]"
+set-window-option -g status-right-length 70
 set-window-option -g status-right-fg colour14
 set-window-option -g status-right-bg black
 
@@ -132,6 +136,11 @@ set-window-option -g window-status-current-fg green #orange
 set-window-option -g window-status-current-bg default
 set-window-option -g window-status-current-attr bright
 
+set-option -gw window-status-activity-style fg=yellow,bg=black,bold
+
 #set -g status-left ' #[fg=cyan,bright]#10H#[fg=green]:#[fg=white]#S#[fg=green] | #[default]'
 #set -g status-right '| #[fg=yellow]%y-%m-%d %H:%M '
 set -g status-justify left
+
+#enable copycat plugin
+run-shell ~/.tmux/tmux-copycat-master/copycat.tmux
