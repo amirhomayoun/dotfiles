@@ -1,1 +1,57 @@
-.mutt/
+# dotfiles
+.*
+ 
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+
+# Compiled Static libraries
+*.[oa]
+*.lai
+*.la
+*.a
+*.d
+*.dd
+
+# comdb2 save files
+*.save
+*.done
+*.clean
+
+# vim swp files
+*.swp
+*.swo
+*.swn
+
+# bak files
+*.bak
+*.old
+
+# tsk file
+*.tsk
+
+# tags files for ctags
+tags
+
+# tag files for cscope
+cscope.files
+cscope.out
+cscope.out.*
+
+# deps
+
+
+# Misc
+*.mapfile
+*.old
+*.new
+*.orig
+*.mine
+
+# SVN
+.svn*
