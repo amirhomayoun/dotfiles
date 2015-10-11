@@ -10,7 +10,7 @@
 "   03. Theme/Colors ............ Colors, fonts, etc.                        "
 "   04. Vim UI .................. User interface behavior                    "
 "   05. Text Formatting/Layout .. Text, tab, indentation related             "
-"   06. Key mappings 
+"   06. Key mappings
 "   07. Plugins...................Plugin specific settings                   "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -21,15 +21,15 @@
 set nocompatible         " get rid of Vi compatibility mode. SET FIRST!
 set so =10
 set term=xterm-256color  " set term
-"set relativenumber  
+"set relativenumber
 set visualbell
 set noerrorbells
 set novisualbell
 "Slow start up of vim because of accessing X clipboard
-set clipboard=autoselect,exclude:cons\\\|linux\\\|screen 
-if $DISPLAY =~ '\(\(cos\|scs\)\d\+nai\d\+\)\|\(spkpc\d\+\)\|\(tc-garyjohn\)' 
-    set clipboard=autoselect,exclude:.* 
-endif 
+set clipboard=autoselect,exclude:cons\\\|linux\\\|screen
+if $DISPLAY =~ '\(\(cos\|scs\)\d\+nai\d\+\)\|\(spkpc\d\+\)\|\(tc-garyjohn\)'
+    set clipboard=autoselect,exclude:.*
+endif
 set clipboard=exclude:*
 set lazyredraw
 set ttyfast
@@ -42,11 +42,28 @@ endif
 set nocp
 
 set backspace=indent,eol,start
-set t_kb= 
+set t_kb=
 fixdel
 let g:pymode_paths=['/home/asadough/bin/Python-2.6.2']
 
+
+"this command adds -b to diff tool command line, and that only ignores trailing whitespaces.
 set diffopt+=iwhite
+
+"The 'diffexpr' option can be set to use something else than the standard diff program to compare two files
+set diffexpr=DiffW()
+set diffexpr=""
+function DiffW()
+    let opt = ""
+    if &diffopt =~ "icase"
+        let opt = opt . "-i "
+    endif
+    if &diffopt =~ "iwhite"
+        let opt = opt . "-w " " vim uses -b by default
+    endif
+    silent execute "!diff -a --binary " . opt .
+                \ v:fname_in . " " . v:fname_new .  " > " . v:fname_out
+endfunction
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " 02. Events                                                                 "
@@ -64,13 +81,29 @@ set omnifunc=syntaxcomplete#Complete
 
 " Enable omnicompletion (to use, hold Ctrl+X then Ctrl+O while in Insert mode.
 " set ofu=syntaxcomplete#Complete
+
+" Automatically fix indentations before saving
+"autocmd BufWritePre *.{c,cpp,h} :normal gg=G
+
+" Get rid of trailing white spaces before saving
+"autocmd BufWritePre * :%s/\s\+$//e
+
+" Remove extra empty lines
+"autocmd BufWritePre *.{c,cpp,h} %s/\n\{3,}/\r\r/e
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " 03. Theme/Colors                                                           "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set t_Co=256              " enable 256-color mode.
 syntax enable             " enable syntax highlighting (previously syntax on).
-color molokai       " set colorscheme
-
+color molokai             " set colorscheme
+set t_ut=
+if &term =~ '256color'
+      " disable Background Color Erase (BCE) so that color schemes
+      " render properly when inside 256-color tmux and GNU screen.
+      " see also http://snk.tuxfamily.org/log/vim-256color-bce.html
+      set t_ut=
+endif
+"
 " Prettify JSON files
 "autocmd BufRead,BufNewFile *.json set filetype=json
 "autocmd Syntax json sou ~/.vim/syntax/json.vim
@@ -86,9 +119,13 @@ color molokai       " set colorscheme
 "au BufWinEnter * let w:m1=matchadd('Search', '\%<81v.\%>77v', -1)
 "au BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
 
+"set background=dark
+"colorscheme solarized
 
 "color schema for visual mode
 hi Visual term=reverse cterm=reverse
+
+
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -135,9 +172,17 @@ set cindent
 set clipboard=unnamedplus
 set nu
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" 05. Text Formatting/Layout                                                 "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Resize the current split to at least (90,25) but no more than (140,260)
+" or 2/3 of the available space otherwise.
+function Splitresize()
+    let hmax = max([winwidth(0), float2nr(&columns*0.66), 160])
+    let vmax = max([winheight(0), float2nr(&lines*0.66), 25])
+    exe "vertical resize" . (min([hmax, 160]))
+    exe "resize" . (min([vmax, 260]))
+endfunction
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" 05. Text Formatting/Layout                                                 "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set autoindent            " auto-indent
 set tabstop=4             " tab spacing
 set softtabstop=4         " unify
@@ -146,7 +191,7 @@ set shiftround            " always indent/outdent to the nearest tabstop
 set expandtab             " use spaces instead of tabs
 set smarttab              " use tabs at the start of a line, spaces elsewhere
 set wrap                  " don't wrap text
-set textwidth=80
+"set textwidth=80
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " 06. Key mappings
@@ -167,18 +212,18 @@ nnoremap <Leader>w <C-w>w
 "map <F2> :ls<CR>:b<Space>           "swich buffers
 
 "Use F4 to switch between source and heade (cpp and h)
-map <F4> :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
-map <F5> :e %:p:s,.h$,.X123X,:s,.c$,.h,:s,.X123X$,.c,<CR>
+map <F6> :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
+map <F2> :e %:p:s,.h$,.X123X,:s,.c$,.h,:s,.X123X$,.c,<CR>
 
 "Use <F6> to switch to the next split
-:map <F6> <C-W>w
+":map <F6> <C-W>w
 
 " Use jj instead of Esc
 imap jj <Esc>
 set timeoutlen=500
 
-"map * *n 
-"map # *N 
+"map * *n
+"map # *N
 nnoremap * :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
 nnoremap # :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
 map N Nzz
@@ -192,13 +237,19 @@ nmap <F11> :!ctags -R .&<CR>
 
 " Taglist keybindings
 nnoremap <silent> <F8> :TlistToggle<CR>
-nnoremap <silent> <F9> :TlistOpen<CR>
+nnoremap <silent> <F7> :TlistOpen<CR>
 
 " Use ctrl-[hjkl] to select the active split!
 nmap <silent> <c-k> :wincmd k<CR>
 nmap <silent> <c-j> :wincmd j<CR>
 nmap <silent> <c-h> :wincmd h<CR>
 nmap <silent> <c-l> :wincmd l<CR>
+
+"nnoremap <silent><C-J> <C-W><C-J>:call Splitresize()<CR>
+"nnoremap <silent><C-K> <C-W><C-K>:call Splitresize()<CR>
+"nnoremap <silent><C-L> <C-W><C-L>:call Splitresize()<CR>
+"nnoremap <silent><C-H> <C-W><C-H>:call Splitresize()<CR>
+nnoremap <leader>r :call Splitresize()<CR>
 
 vnoremap <leader>t :Tabular<space>/
 
@@ -213,13 +264,21 @@ vnoremap <silent> # :<C-U>
   \gvy?<C-R><C-R>=substitute(
   \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
   \gV:call setreg('"', old_reg, old_regtype)<CR>
+
+
+"Ctrl+\ - Open the definition in a new tab
+"map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
+"Alt+] - Open the definition in a vertical split
+"map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+map <C-\> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " 07. Plugins
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"let g:miniBufExplMapWindowNavVim = 1        "minibufexplorer 
-"let g:miniBufExplMapWindowNavArrows = 1     "minibufexplorer 
-"let g:miniBufExplMapCTabSwitchBufs = 1      "minibufexplorer 
-"let g:miniBufExplModSelTarget = 1           "minibufexplorer  
+"let g:miniBufExplMapWindowNavVim = 1        "minibufexplorer
+"let g:miniBufExplMapWindowNavArrows = 1     "minibufexplorer
+"let g:miniBufExplMapCTabSwitchBufs = 1      "minibufexplorer
+"let g:miniBufExplModSelTarget = 1           "minibufexplorer
 
 autocmd BufEnter * :syntax sync fromstart
 
@@ -253,14 +312,15 @@ nnoremap <Leader>g+ :Silent Git stash pop<CR>:e<CR>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """" FuzzyFinder
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-hi Pmenu ctermbg=red  
-hi Pmenu ctermfg=black  
+hi Pmenu ctermbg=red
+hi Pmenu ctermfg=black
 
-let g:fuf_modesDisable = []
+" This option stops the number of changes after search and replace (?)
+"let g:fuf_modesDisable = []
 let g:fuf_mrufile_maxItem = 1000
 let g:fuf_mrucmd_maxItem = 400
 let g:fuf_mrufile_exclude = '\v\~$|\.(o|d|bak|tsk|sw[po])$|^(\/\/|\\\\|\/mnt\/)'
-"nnoremap <silent> <C-n>      :FufBuffer<CR>
+nnoremap <silent> <C-n>      :FufBuffer<CR>
 nnoremap <silent> <Leader>n      :FufBuffer<CR>
 "nnoremap <silent> <C-p>      :FufFileWithCurrentBufferDir<CR>
 nnoremap <silent> <Leader>p      :FufFileWithCurrentBufferDir<CR>
@@ -305,10 +365,11 @@ nnoremap <silent> <Leader>f<Leader>e :FufEditDataFile<CR>
 "nnoremap <silent> <C-f><C-r> :FufRenewCache<CR>
 nnoremap <silent> <Leader>f<Leader>r :FufRenewCache<CR>
 
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """" Cscope
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"Look in the current directory for tags, and work up the tree towards root until one is found.
 set tags=tags;/                     "ctag
 source ~/.vim/bundle/cscope_macros/cscope_macros.vim
 
@@ -330,7 +391,7 @@ if has('cscope')
   command -nargs=0 Cscope cs add $VIMSRC/src/cscope.out $VIMSRC/src
 endif
 
-
+"
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """" Upper/Lower case: mapping case conversion keys
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -402,7 +463,7 @@ let g:snipMate = {}
 
     "let g:startify_custom_header =
     "      \ map(split(system('tips | cowsay -f apt'), '\n'), '"   ". v:val') + ['']
-    let g:startify_custom_header1 = [
+     let g:startify_custom_header1 = [
                 \'                                                                                     bbbbbbbb                                                                        ',
                 \'BBBBBBBBBBBBBBBBB   lllllll                                                          b::::::b                                                                        ',
                 \'B::::::::::::::::B  l:::::l                                                          b::::::b                                                                        ',
@@ -443,7 +504,7 @@ let g:snipMate = {}
                 \'                                                                         Y8b d88P ',
                 \'                                                                          "Y88P"  ',
                 \]
-                                                                                                                                   
+
     hi StartifyBracket ctermfg=240
     hi StartifyNumber  ctermfg=215
     hi StartifyPath    ctermfg=245
@@ -465,7 +526,10 @@ let s:semanticGUIColors = [ '#72d572', '#c5e1a5', '#e6ee9c', '#fff59d', '#ffe082
 
 "Check http://img1.wikia.nocookie.net/__cb20110121055231/vim/images/1/16/Xterm-color-table.png
 "let g:semanticTermColors = [28,1,2,3,4,5,6,7,25,9,10,34,12,13,14,15,16,125,124,19]
-let g:semanticTermColors = [28,1,2,3,5,6,7,9,10,34,13,14,15,125,124,57,153,21]
+"let g:semanticTermColors = [28,1,2,3,5,6,7,9,10,34,13,14,15,125,124,57,153,21]
+let g:semanticTermColors = [28,1,2,3,5,6,7,9,10,34,13,14,15,125,124,57,153,39]
+"let s:semanticTermColors = [ '#72d572', '#c5e1a5', '#e6ee9c', '#fff59d', '#ffe082', '#ffcc80', '#ffab91', '#bcaaa4', '#b0bec5', '#ffa726', '#ff8a65', '#f9bdbb', '#f9bdbb', '#f8bbd0', '#e1bee7', '#d1c4e9', '#ffe0b2', '#c5cae9', '#d0d9ff', '#b3e5fc', '#b2ebf2', '#b2dfdb', '#a3e9a4', '#dcedc8' , '#f0f4c3', '#ffb74d' ]
+
 nnoremap <Leader>s :SemanticHighlightToggle<cr>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -474,3 +538,14 @@ nnoremap <Leader>s :SemanticHighlightToggle<cr>
 let g:ycm_global_ycm_extra_conf = '/home/asadough/.vim/ycm_extra_conf.py'
 "let g:syntastic_cpp_checkers = ['plink']
 "let g:syntastic_cpp_include_dirs = ['bidea_utils/', 'bidea_utils/shared_xsds', 'btmsgsvc/src', '/bbsrc']
+"
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""Linediff
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"nnoremap <Leader>vv :Linediff<CR><CR>
+vnoremap <leader>ld :Linediff<cr>
+nnoremap <leader>ld :Linediff<cr>
+nnoremap <leader>lr :LinediffReset<cr>
+
+
