@@ -14,6 +14,9 @@ set -g renumber-windows on
 
 set -sg escape-time 1
 
+# Interact with xterm clipboard.
+set-option -g set-clipboard on
+
 #Make mouse useful in copy mode
 setw -g mode-mouse on
 
@@ -35,7 +38,7 @@ bind-key -t vi-copy 'y' copy-selection      # Yank selection in copy mode.
 #bind -t vi-copy Escape cancel
 
 setw -g monitor-activity on
-set -g visual-activity off  
+set -g visual-activity off
 set -g monitor-content 'hi'
 
 
@@ -70,9 +73,9 @@ bind-key -n M-PPage swap-window -t +1
 
 # pane movement
 bind-key J command-prompt -p "join pane from:"  "join-pane -s '%%'"
-bind-key S command-prompt -p "send pane to:"  "join-pane -t '%%'"
+bind-key K command-prompt -p "send pane to:"  "join-pane -t '%%'"
 
-bind-key z resize-pane -Z \; display-message "Zoom zoom zoom" 
+bind-key z resize-pane -Z \; display-message "Zoom zoom zoom"
 
 set -g history-limit 50000
 
@@ -88,6 +91,12 @@ set -g pane-border-fg colour178
 set -g pane-border-bg colour178
 set -g pane-active-border-fg blue
 set -g pane-active-border-bg blue
+#if '[ `hostname -s` = lupin ] && ! tmux has-session -t main' 'source-file $HOME/.tmux/lupin.conf'
+#if '[ `hostname -s` = linxdev23 ] ' 'source-file $HOME/.tmux.conf.prod'
+#if '[ `hostname -s` = p019 ] ' 'source-file $HOME/.tmux.conf.prod'
+#if '[ 'hostname -s' = linxdev23 ] 'source-file ~/.tmux.conf'
+#if '[ `hostname -s` = linxdev23 ] 'set -g pane-active-border-bg red'
+if 'tmux has-session -t prod' 'source-file $HOME/.tmux.conf.prod'
 
 set-window-option -g status-bg black
 set-window-option -g status-fg colour178
@@ -144,3 +153,15 @@ set -g status-justify left
 
 #enable copycat plugin
 run-shell ~/.tmux/tmux-copycat-master/copycat.tmux
+
+#enable tmux resurrect plugin
+run-shell ~/.tmux/tmux-resurrect-master/resurrect.tmux
+set -g @resurrect-strategy-vim 'session'
+
+#enable tmux sessionist plugin
+run-shell ~/.tmux/tmux-sessionist/sessionist.tmux
+
+#enable tmux logging plugin
+run-shell ~/.tmux/tmux-logging/logging.tmux
+
+bind-key -n C-k send-keys -R C-m \; clear-history
