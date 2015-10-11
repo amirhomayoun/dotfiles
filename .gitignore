@@ -1,5 +1,6 @@
 # dotfiles
 .*
+!/.gitignore
  
 # Compiled Object files
 *.slo
@@ -35,6 +36,9 @@
 # tsk file
 *.tsk
 
+#python compiled files
+*.pyc
+
 # tags files for ctags
 tags
 
@@ -44,7 +48,10 @@ cscope.out
 cscope.out.*
 
 # deps
-
+.nfs*
+00*
+ported*
+*.ibm
 
 # Misc
 *.mapfile
@@ -52,6 +59,11 @@ cscope.out.*
 *.new
 *.orig
 *.mine
+*.tmp
+*.temp
 
 # SVN
 .svn*
+
+# EMACS
+*~
