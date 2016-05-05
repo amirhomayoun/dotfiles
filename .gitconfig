@@ -1,0 +1,54 @@
+[user]
+	name = Amir Sadoughi
+	email = 
+
+[core]
+	editor = vim
+	pager = less
+	whitespace = cr-at-eol
+[color]
+	ui = true
+
+[alias]
+    lg1 = log --graph --abbrev-commit --decorate --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' 
+    lg2 = log --graph --abbrev-commit --decorate --date=local --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''%C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
+    lg = !"git lg1 ${1:-'--all'}"
+    tree = "forest --pretty=format:\"%C(red)%h %C(magenta)(%ar) %C(blue)%an %C(reset)%s\" --style=15 --reverse"
+    diffmk = !git diff -- $(git diff --name-only | grep -Ev "*.mk") 
+
+    cp = cherry-pick
+    st = status 
+    cl = clone
+    ci = commit
+    co = checkout
+    br = branch 
+    diff = diff --word-diff
+    dc = diff --cached
+	d = difftool
+	mt = mergetool
+	m3 = mergetool -t merge3
+
+[diff]
+	tool = vimdiff
+	submodule = log
+[difftool]
+	prompt = false
+[merge]
+	tool = fugitive
+[svn]
+	rmdir = true
+    #authorsprog = /home/asadough/bin/git-svn-resolve-author
+	authorsprog = /bb/news/dev/build/bin/git-svn-resolve-author
+[mergetool "merge3"]
+	cmd = vim -d -c \"wincmd l\" \"$LOCAL\" \"$MERGED\" \"$REMOTE\"
+[mergetool "fugitive"]
+	cmd = vim -f -c \"Gdiff\" \"$MERGED\"
+[log]
+	date = local
+
+[push]
+	default = simple
+[status]
+	submoduleSummary = true
+[credential]
+	helper = cache
