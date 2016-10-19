@@ -37,7 +37,8 @@ fi
 ###########################################################################
 
 alias ls="/opt/swt/install/coreutils-8.21-64/bin/ls --color="auto""
-alias tmux="TERMINFO=~/.terminfo/ LD_LIBRARY_PATH=~/lib:/opt/swt/lib/ ~/bin/tmux"
+alias tmux="TERMINFO=~/.terminfo/ LD_LIBRARY_PATH=~/lib:/opt/swt/lib/ ~/local/bin/tmux"
+alias urxvt="LD_LIBRARY_PATH=/opt/swt/install/gcc-4.3.2/lib64/:/opt/swt/lib ~/local/bin/urxvt"
 alias la="ls -lah"
 alias cl="clear"
 alias psep="psef"
@@ -54,18 +55,21 @@ vim(){
 }
 
 alias grep='grep --color'
-alias urxvt=/home/asadough/bin/run_urxvt
+#alias urxvt=/home/asadough/bin/run_urxvt
 alias ccat="pygmentize -g -O style=colorful,linenos=1"
 
-alias bigstore="cd /bb/bigstorn/fixed_income/asadough/"
+alias big="cd /bb/bigstorn/fixed_income/"
 alias mbig="cd /bb/mbig/mbig948"
-alias muni="cd /bb/mbig/mbig948/muniverse"
 alias btmsg="cd /bb/mbig/mbig948/myBidea/btid/btmsgsvc"
 alias sumun="cd /bb/mbig/mbig948/MUNI/fidelity/sumunsvc"
-alias mncdr="cd /bb/mbig/mbig948/MUNI/fidelity/mncdrsvc"
-alias work4="cd /bb/mbig/mbig948/tmsg"
 alias bbds="cd /bb/mbig/mbig948/MUNI/BBDS/munibbds"
-alias pica="cd /bb/mbig/mbig948/MUNI/pckausvc"
+alias pick="cd /bb/mbig/mbig948/pick"
+alias cntr="cd /bb/mbig/mbig948/pick/pickcntr"
+alias data="cd /bb/mbig/mbig948/pick/pickdata"
+alias util="cd /bb/mbig/mbig948/pick/pickutil"
+alias tick="cd /bb/mbig/mbig948/pick/picktick"
+alias shrd="cd /bb/mbig/mbig948/pick/pick_shared"
+alias srvx="cd /bb/mbig/mbig948/pick/picksrvx"
 alias req="vim *req*proc*.cpp"
 alias ssh1="ssh sundev1"
 alias ssh2="ssh sundev2"
@@ -88,6 +92,28 @@ else
     alias wechat="tmux switch-client -t weechat || TMUX= tmux new-session -d -s weechat; tmux switch-client -t weechat"
 fi
 
+prqspw(){
+    echo "Creating PRQS PW for $1"
+    #message="Op1_for_$1"
+    #echo $message
+    #tt="/bb/admin/ngetprdwin.py -u op1 -d'$message' -i -s $1"
+    #tt="/bb/admin/ngetprdwin.py -u op1 -d$message  -i -s $1"
+    #tt="/bb/admin/ngetprdwin.py -u op1 -d$(printf "\'Op1 for $1\'")  -i -s $1"
+    #tt="/home/asadough/bin/ngetprdwin.py -u op1 -d'Op1 for $1' -i -s $1"
+
+    #tt="/bb/admin/ngetprdwin.py -u op1 -d'Op1 for $1' -i -s $1" #ngetprdwin.py does not exist on on Linux boxes (27 for instance)
+    tt="/bb/bin/getprdwin -u op1 -d'Op1 for $1' -i -s $1"
+    #echo $tt
+    eval $tt
+    #$(/home/asadough/bin/ngetprdwin.py -u op1 -d"op1 for $1" -i -s $1)
+
+}
+alias pw=prqspw
+#alias pw="/bb/admin/ngetprdwin.py -u op1 -d'op1 for $1' -i -s"
+
+
+
+
 
 ###########################################################################
 ## Terminal settings
@@ -96,12 +122,23 @@ set TERMINFO="$HOME/.terminfo"
 #PATH=${PATH}:/bbsrc/training/bin:/opt/swt/bin
 PATH=${PATH}:/opt/swt/bin
 
+stty stop ''
+stty start ''
+stty -ixon
+stty -ixoff
+
 EDITOR=vim
 green=$(tput setaf 2)
+red=$(tput setaf 5)
 blue=$(tput setaf 4)
 bold=$(tput bold)
 reset=$(tput sgr0)
-PS1='\[$green$bold\]\h\[$reset\]:\[$blue$bold\]\w\[$reset\]\$ '
+
+if [[ $ARCH = Linux* ]]; then
+    PS1='\[$red$bold\]\h\[$reset\]:\[$blue$bold\]\w\[$reset\]\$ '
+else
+    PS1='\[$green$bold\]\h\[$reset\]:\[$blue$bold\]\w\[$reset\]\$ '
+fi
 #PS1="\\[\e[00;37m\][\[\e[0m\]\[\e[00;31m\]\h\[\e[0m\]\[\e[00;37m\]]\w\\$ \[\e[0m\]"
 #PS1="\[\e[00;37m\][\[\e[0m\]\[\e[00;31m\]\h\[\e[0m\]\[\e[00;37m\]]\w\\$ \[\e[0m\]"
 #PS1="\[${Yellow}\][\[${Green}\]\u\[${Red}\]@\[${Purple}\]\h\[${Yellow}\]]\[${Cyan}\]\w\[${Color_Off}\]\[\$\] "
@@ -118,12 +155,14 @@ eval `dircolors ~/.dir_colors`
 
 PATH="$PATH:$HOME/urxvt/usr/local/lib"
 PATH="$PATH:$HOME/.tmuxifier/bin"
+PATH="$HOME/local/bin:$PATH"
 
 export GREP_COLORS="mc=00;36:ms=31:mt=01;33"
 export HISTSIZE=10000
 #export TERM=msys
 
 PERL5LIB=/bb/util/common/perlmod/lib/site_perl:/home/asadough/.urxvt/ext; export PERL5LIB
+shopt -s extglob
 
 ###########################################################################
 ## Tmux settings
@@ -188,7 +227,7 @@ function __tmux-sessions()
     sessions=( ${${(f)"$(command tmux list-sessions)"}/:[ $'\t']##/:} )
     _describe -t sessions 'sessions' sessions "$@"
 }
-compdef __tmux-sessions tm
+#compdef __tmux-sessions tm
 
 function tmw
 {
@@ -204,7 +243,11 @@ log()
 
 dirPlink()
 {
-    plink $(basename $PWD).mk;
+    if [ -e $(basename $PWD).mk ]; then
+        plink $(basename $PWD).mk;
+    else 
+        plink *.mk;
+    fi
 }
 
 dirPlinkClean()
@@ -244,7 +287,7 @@ man() {
     man "$@"
 }
 
-
+#. /bbsrc/princeton/skunk/vim/bb_include_path_cursor_vim source
 lsloop(){
     if [ -z "$1" ]
     then
@@ -415,11 +458,86 @@ ns() {
 }
 
 
-eval "$(tmuxifier init -)"
+#eval "$(tmuxifier init -)"
+
+#export http_proxy=http://bproxy.tdmz1.bloomberg.com:80
+#export https_proxy=http://bproxy.tdmz1.bloomberg.com:80
+#export HTTP_PROXY=http://bproxy.tdmz1.bloomberg.com:80
+#export HTTPS_PROXY=http://bproxy.tdmz1.bloomberg.com:80
+
+#export http_proxy=http://devproxy.bloomberg.com:82
+#export https_proxy=http://devproxy.bloomberg.com:82
 
 export GIT_SSL_NO_VERIFY=true
 
-export PATH=~/bin:$PATH
+#export PATH=~/bin:$PATH
 
 #For Raffaello
 export PYTHONPATH=/home/asadough/lib/python/
+
+
+
+
+PURPLE="\e[1;35m"
+BLUE="\e[0;34m"
+LIGHT_BLUE="\e[1;34m"
+YELLOW="\e[1;33m"
+GREEN="\e[0;32m"
+LIGHT_GREEN="\e[1;32m"
+RED="\e[1;31m"
+WHITE="\e[0m"
+CYAN="\e[1;36m"
+ORANGE="\e[38;5;208m"
+LIGHT_PURPLE="\e[38;5;212m"
+PINK="\e[38;5;198m"
+GRAY="\e[38;5;60m"
+
+STAGED_MESSAGE="Changes to be committed:"
+MODIFIED_MESSAGE="Changes not staged for commit:"
+UNTRACKED_MESSAGE="Untracked files:"
+CLEAN_MESSAGE="nothing to commit, working directory clean"
+
+__load_git_status()
+{
+    if [ -d .git ] || git rev-parse --git-dir > /dev/null 2>&1
+    then
+        BRANCH=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
+        #echo -en " ${LIGHT_PURPLE}[$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
+        echo -en " ${LIGHT_PURPLE}["
+
+        STATUS="$(git status 2>&1)"
+
+        if echo "${STATUS}" | grep -q "${CLEAN_MESSAGE}" > /dev/null
+        then
+            echo -en "${GREEN}${BRANCH}"
+        fi
+
+        if echo "${STATUS}" | grep -q "${STAGED_MESSAGE}" > /dev/null
+        then
+            #echo -en "${GREEN}!"
+            echo -en "${CYAN}!${BRANCH}!"
+        fi
+
+        if echo "${STATUS}" | grep -q "${MODIFIED_MESSAGE}" > /dev/null
+        then
+            #echo -en "${YELLOW}!"
+            echo -en "${RED}${BRANCH}"
+        fi
+
+        if echo "${STATUS}" | grep -q "${UNTRACKED_MESSAGE}" > /dev/null
+        then
+            #echo -en "${RED}!"
+            echo -en "${GRAY}${BRANCH}"
+        fi
+
+        echo -en "${LIGHT_PURPLE}]"
+    fi
+}
+
+if [[ $ARCH = Linux* ]]; then
+    export PS1="\[${red}${bold}\]\h\[$reset\]:\[${blue}${bold}\]\w\$(__load_git_status)\[${red}${bold}\] $ \[${WHITE}\]"
+else
+    export PS1="\[${green}${bold}\]\h\[${blue}${bold}\]:\[${ORANGE}\]\W\$(__load_git_status)\[${YELLOW}\] $ \[${WHITE}\]"
+fi
+
+    #PS1='\[$red$bold\]\h\[$reset\]:\[$blue$bold\]\w\[$reset\]\$ '
