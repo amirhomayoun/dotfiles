@@ -534,10 +534,49 @@ __load_git_status()
     fi
 }
 
+
+__load_git_status_fast()
+{
+    if [[ $PWD/ != ~/ && -d .git ]] || git rev-parse --git-dir > /dev/null 2>&1
+    then
+        BRANCH=$(__git_ps1)
+        echo -en "${LIGHT_PURPLE}["
+
+        #  staged     modified     untracked
+        #    0           0            0          0  clean
+        #    0           0            1          1  untracked
+        #    0           1            0          2  modified
+        #    0           1            1          3  modified+untracked
+        #    1           0            0          4  staged
+        #    1           0            1          5  staged+untracked
+        #    1           1            0          6  staged+modified
+        #    1           1            1          7  staged+modified+untracked
+        STATE=0 #clean
+        git diff --quiet >/dev/null 2>&1 || STATE=$((STATE + 2))
+        git diff --staged --quiet >/dev/null 2>&1 || STATE=$((STATE + 4))
+        git ls-files --others --exclude-standard --directory --no-empty-directory --error-unmatch -- ':/*' >/dev/null 2>&1 && STATE=$((STATE + 1))
+
+        #printf $STATE+">"
+
+        ((($STATE==0))) &&  echo -en "${GREEN}"                 # clean
+        ((($STATE==1))) &&  echo -en "${YELLOW}!${GREEN}"       # untracked
+        ((($STATE==2))) &&  echo -en "${RED}"                   # modified
+        ((($STATE==3))) &&  echo -en "${YELLOW}!${RED}"         # modified+untracked
+        ((($STATE==4))) &&  echo -en "${CYAN}"                  # staged
+        ((($STATE==5))) &&  echo -en "${YELLOW}!${CYAN}"        # staged+untracked
+        ((($STATE==6))) &&  echo -en "${RED}!${CYAN}"           # staged+modified
+        ((($STATE==7))) &&  echo -en "${RED}!${YELLOW}!${CYAN}" # staged+modified+untracked
+
+        printf "%s" ${BRANCH}
+        echo -en "${LIGHT_PURPLE}]"
+    fi
+}
+
+
 if [[ $ARCH = Linux* ]]; then
-    export PS1="\[${red}${bold}\]\h\[$reset\]:\[${blue}${bold}\]\w\$(__load_git_status)\[${red}${bold}\] $ \[${WHITE}\]"
+    export PS1="\[${red}${bold}\]\h\[$reset\]:\[${blue}${bold}\]\w\$(__load_git_status_fast)\[${red}${bold}\] $ \[${WHITE}\]"
 else
-    export PS1="\[${green}${bold}\]\h\[${blue}${bold}\]:\[${ORANGE}\]\W\$(__load_git_status)\[${YELLOW}\] $ \[${WHITE}\]"
+    export PS1="\[${green}${bold}\]\h\[${blue}${bold}\]:\[${ORANGE}\]\W\$(__load_git_status_fast)\[${YELLOW}\] $ \[${WHITE}\]"
 fi
 
-    #PS1='\[$red$bold\]\h\[$reset\]:\[$blue$bold\]\w\[$reset\]\$ '
+#PS1='\[$red$bold\]\h\[$reset\]:\[$blue$bold\]\w\[$reset\]\$ '
