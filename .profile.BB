@@ -128,20 +128,20 @@ stty -ixon
 stty -ixoff
 
 EDITOR=vim
-green=$(tput setaf 2)
-red=$(tput setaf 5)
-blue=$(tput setaf 4)
-bold=$(tput bold)
-reset=$(tput sgr0)
+#green=$(tput setaf 2)
+#red=$(tput setaf 5)
+#blue=$(tput setaf 4)
+#bold=$(tput bold)
+#reset=$(tput sgr0)
 
-if [[ $ARCH = Linux* ]]; then
-    PS1='\[$red$bold\]\h\[$reset\]:\[$blue$bold\]\w\[$reset\]\$ '
-else
-    PS1='\[$green$bold\]\h\[$reset\]:\[$blue$bold\]\w\[$reset\]\$ '
-fi
-#PS1="\\[\e[00;37m\][\[\e[0m\]\[\e[00;31m\]\h\[\e[0m\]\[\e[00;37m\]]\w\\$ \[\e[0m\]"
-#PS1="\[\e[00;37m\][\[\e[0m\]\[\e[00;31m\]\h\[\e[0m\]\[\e[00;37m\]]\w\\$ \[\e[0m\]"
-#PS1="\[${Yellow}\][\[${Green}\]\u\[${Red}\]@\[${Purple}\]\h\[${Yellow}\]]\[${Cyan}\]\w\[${Color_Off}\]\[\$\] "
+#if [[ $ARCH = Linux* ]]; then
+#    PS1='\[$red$bold\]\h\[$reset\]:\[$blue$bold\]\w\[$reset\]\$ '
+#else
+#    PS1='\[$green$bold\]\h\[$reset\]:\[$blue$bold\]\w\[$reset\]\$ '
+#fi
+##PS1="\\[\e[00;37m\][\[\e[0m\]\[\e[00;31m\]\h\[\e[0m\]\[\e[00;37m\]]\w\\$ \[\e[0m\]"
+##PS1="\[\e[00;37m\][\[\e[0m\]\[\e[00;31m\]\h\[\e[0m\]\[\e[00;37m\]]\w\\$ \[\e[0m\]"
+##PS1="\[${Yellow}\][\[${Green}\]\u\[${Red}\]@\[${Purple}\]\h\[${Yellow}\]]\[${Cyan}\]\w\[${Color_Off}\]\[\$\] "
 
 if [[ $ARCH = SunOS* ]]; then
 #    alias ls="/opt/swt/install/coreutils-8.12/bin/ls --color"
@@ -477,6 +477,21 @@ export PYTHONPATH=/home/asadough/lib/python/
 
 
 
+#BLACK=$(tput setaf 0)
+#RED=$(tput setaf 1)
+#GREEN=$(tput setaf 2)
+#LIME_YELLOW=$(tput setaf 190)
+#YELLOW=$(tput setaf 3)
+#POWDER_BLUE=$(tput setaf 153)
+#BLUE=$(tput setaf 4)
+#MAGENTA=$(tput setaf 5)
+#CYAN=$(tput setaf 6)
+#WHITE=$(tput setaf 7)
+#BRIGHT=$(tput bold)
+#NORMAL=$(tput sgr0)
+#BLINK=$(tput blink)
+#REVERSE=$(tput smso)
+#UNDERLINE=$(tput smul)
 
 PURPLE="\e[1;35m"
 BLUE="\e[0;34m"
@@ -491,48 +506,59 @@ ORANGE="\e[38;5;208m"
 LIGHT_PURPLE="\e[38;5;212m"
 PINK="\e[38;5;198m"
 GRAY="\e[38;5;60m"
+#NORMAL=$(tput sgr0)
+NORMAL="\e[0m"
+#BRIGHT=$(tput bold)
+BRIGHT="\e[1m"
 
-STAGED_MESSAGE="Changes to be committed:"
-MODIFIED_MESSAGE="Changes not staged for commit:"
-UNTRACKED_MESSAGE="Untracked files:"
-CLEAN_MESSAGE="nothing to commit, working directory clean"
-
-__load_git_status()
-{
-    if [ -d .git ] || git rev-parse --git-dir > /dev/null 2>&1
-    then
-        BRANCH=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
-        #echo -en " ${LIGHT_PURPLE}[$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
-        echo -en " ${LIGHT_PURPLE}["
-
-        STATUS="$(git status 2>&1)"
-
-        if echo "${STATUS}" | grep -q "${CLEAN_MESSAGE}" > /dev/null
-        then
-            echo -en "${GREEN}${BRANCH}"
-        fi
-
-        if echo "${STATUS}" | grep -q "${STAGED_MESSAGE}" > /dev/null
-        then
-            #echo -en "${GREEN}!"
-            echo -en "${CYAN}!${BRANCH}!"
-        fi
-
-        if echo "${STATUS}" | grep -q "${MODIFIED_MESSAGE}" > /dev/null
-        then
-            #echo -en "${YELLOW}!"
-            echo -en "${RED}${BRANCH}"
-        fi
-
-        if echo "${STATUS}" | grep -q "${UNTRACKED_MESSAGE}" > /dev/null
-        then
-            #echo -en "${RED}!"
-            echo -en "${GRAY}${BRANCH}"
-        fi
-
-        echo -en "${LIGHT_PURPLE}]"
-    fi
-}
+#STAGED_MESSAGE="Changes to be committed:"
+#MODIFIED_MESSAGE="Changes not staged for commit:"
+#UNTRACKED_MESSAGE="Untracked files:"
+#CLEAN_MESSAGE="nothing to commit, working directory clean"
+#__load_git_status()
+#{
+#    if [ -d .git ] || git rev-parse --git-dir > /dev/null 2>&1
+#    then
+#        #BRANCH=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
+#        BRANCH=$(__git_ps1)
+#        #echo -en " ${LIGHT_PURPLE}[$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
+#        echo -en " ${LIGHT_PURPLE}["
+#
+#        #STATUS="$(git status 2>&1)"
+#        #STATUS=${UNTRACKED_MESSAGE}
+#        STATUS=${CLEAN_MESSAGE}
+#        git diff --quiet || STATUS=${MODIFIED_MESSAGE}
+#        git diff --staged --quiet || STATUS=${STAGED_MESSAGE}
+#        git ls-files --others --exclude-standard --directory --no-empty-directory --error-unmatch -- ':/*' >/dev/null 2>/dev/null && STATUS=${UNTRACKED_MESSAGE}
+#
+#
+#        if echo "${STATUS}" | grep -q "${CLEAN_MESSAGE}" > /dev/null
+#        then
+#            echo -en "${GREEN}${BRANCH}"
+#        fi
+#
+#        if echo "${STATUS}" | grep -q "${STAGED_MESSAGE}" > /dev/null
+#        then
+#            #echo -en "${GREEN}!"
+#            echo -en "${CYAN}!${BRANCH}!"
+#        fi
+#
+#        if echo "${STATUS}" | grep -q "${MODIFIED_MESSAGE}" > /dev/null
+#        then
+#            #echo -en "${YELLOW}!"
+#            echo -en "${RED}${BRANCH}"
+#        fi
+#
+#        if echo "${STATUS}" | grep -q "${UNTRACKED_MESSAGE}" > /dev/null
+#        then
+#            #echo -en "${RED}!"
+#            echo -en "${GRAY}${BRANCH}"
+#        fi
+#
+#        echo -en "${LIGHT_PURPLE}]"
+#    fi
+#}
+#
 
 
 __load_git_status_fast()
@@ -569,14 +595,17 @@ __load_git_status_fast()
 
         printf "%s" ${BRANCH}
         echo -en "${LIGHT_PURPLE}]"
+    else
+        echo ""
     fi
+
 }
 
-
 if [[ $ARCH = Linux* ]]; then
-    export PS1="\[${red}${bold}\]\h\[$reset\]:\[${blue}${bold}\]\w\$(__load_git_status_fast)\[${red}${bold}\] $ \[${WHITE}\]"
+    export PS1="\[${PURPLE}\]\[${BRIGHT}\]\h\[$NORMAL\]:\[${BLUE}\]\[${BRIGHT}\]\w\[\$(__load_git_status_fast)\]\[${RED}\]\[${BRIGHT}\] $ \[${WHITE}\]"
 else
-    export PS1="\[${green}${bold}\]\h\[${blue}${bold}\]:\[${ORANGE}\]\W\$(__load_git_status_fast)\[${YELLOW}\] $ \[${WHITE}\]"
+    export PS1="\[${GREEN}\]\[${BRIGHT}\]\h\[$NORMAL\]:\[${BLUE}\]\[${BRIGHT}\]\w\[\$(__load_git_status_fast)\]\[${RED}\]\[${BRIGHT}\] $ \[${WHITE}\]"
 fi
 
 #PS1='\[$red$bold\]\h\[$reset\]:\[$blue$bold\]\w\[$reset\]\$ '
+# PS1="\[${WHITE}\](\[${YELLOW}\]\u@\h\[${WHITE}\])\[${NORMAL}\]$ "
