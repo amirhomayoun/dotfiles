@@ -1,0 +1,142 @@
+*****************VIM****************
+
+sort list of numbers:
+select line: (break numbers by space, jump to the beginning of the previously changed text and sort numerically and jump to the end of the changed text and join
+:'<,'>s/\s\+/\r/g|'[,sort n|,']j  
+
+*****************MISC****************
+
+// Find large files
+find . -printf '%s %p\n'| sort -nr | head -100
+
+###Build urxvt 
+curl -O http://dist.schmorp.de/rxvt-unicode/Attic/rxvt-unicode-9.22.tar.bz2
+bzip2 -d rxvt-unicode-9.22.tar.bz2 && tar -xvf rxvt-unicode-9.22.tar && cd rxvt-unicode-9.22
+./configure  --prefix=/home/asadough/local --enable-everything --enable-256-color
+make
+make install
+cd ~/local/bin
+/opt/swt/install/gcc-4.3.2/lib64/:/opt/swt/lib urxvt
+
+###Build tmux 
+tmux_local_install.sh
+
+// to fix password
+vastool kinit
+
+To check machine permissions:
+vastool attrs asadough memberof|egrep -v 'RBP|PVF'|sort 
+
+**********************GIT*****************************
+
+## Sparse checkout
+mkdir <repo>
+cd <repo>
+git init
+git remote add -f origin <url>
+git config core.sparseCheckout true
+echo "some/dir/" >> .git/info/sparse-checkout
+echo "another/sub/tree" >> .git/info/sparse-checkout
+git pull origin master
+
+# To reread new directories
+git read-tree -mu HEAD
+
+for branch in $(git rev-list --all); do if (git ls-tree -r --name-only $branch | grep --quiet "$1"); then echo $branch; fi done
+for branch in $(git rev-list --all); do   git ls-tree -r --name-only $branch | grep "$1" | sed 's/^/'$branch': /'; done
+
+# To rewrite the history and move a file's location
+git filter-branch --tree-filter 'if [ -f old ]; then mkdir dir && mv old dir/new; fi' HEAD
+
+# To create a patch out of a file's history to apply to another project
+git log --pretty=email --patch-with-stat --reverse -- path/to/file_or_folder | (cd /path/to/new_repository && git am)
+
+**********************SVN*****************************
+git svn init -s URL
+git svn fetch
+
+svn del svn+ssh://devsvn/location
+
+svn propset --recursive svn:ignore --file .svnignore .
+
+**********************RCS*****************************
+git init && rcs-fast-export.rb . | git fast-import && git reset
+git init && /opt/swt/bin/ruby ~/bin/rcs-fast-export.rb . | git fast-import && git reset
+
+
+
+********************** DEBUG ******************************
+in dbx:
+loadobject -exclude libgtkibig*
+adobject -list
+attach PID
+loadobject -load /path/to/shared_lib.so
+
+**********************RANDOM commands******************************
+less log |grep username|sort -t '|' -k4 -r|cut -d "|" -f2|cut -d " " -f2|paste -sd+ |bc -l
+sort -u -t "   " -k 6,6 -s < file.txt |less
+sort -u -k2,2 -t "    "    < file.txt|sort -t " " -k 6
+sort -u -t "   " -k 2,2 -s < *F*Z*|sort -t "   " -k 6 > test
+awk 'int($6)>=20050101 && int($10)%100==0 && int($8)!=88888888' file.txt
+find . -type f -size +50000k -exec ls -lh {} \; | awk '{ print $9 ": " $5 }'
+
+
+grep "50=0" file|cut -d"=" -f25|sort -u
+
+
+awk -F, '{if(length > 100) print NR, $0}' file
+sed -n '/PublishDateTime/{N;N;p}' /bb/data/tmp/log.log5|sed -n '/<Date>/{N;p}'|sed '$!N;s/\n/ /'|less
+
+for lineNumber in `egrep -n "flag = 2" /bb/data/act.log.1|egrep 8775|cut -d":" -f1` ;do cat -n log.1 | sed -n "$((lineNumber -1)),+10{p;}" ;echo "\n\n" ;done
+grep -A10 -B1 -E 'flag = 2.*8775' log.log
+
+makefifo a_fifo b_fifo
+scid -d machine=n121 -d date=2015-05-05:2015-05-06|cut -d"," -f1|sort >a_fifo  &
+scid -d machine=n121 -d date=2015-05-06:2015-05-07|cut -d"," -f1|sort >b_fifo  &
+diff -y --supress-common-lines a_fifo b_fifo
+
+while (true); do sleep 1; ls -l file.tsk |cut -s -f 24-27  -d' '  ;done
+
+Monitor the latest file in the directory:
+tail -f $(ls  -A1 log.log.201509*|tail -1)
+
+Check if files in a list exist or not:
+cat list | while read line; do if [[ $(find . -name $line) ]] ;  then echo "FOUND $line"; else echo "NOT  $line"; fi; done
+
+Both are almost the same:
+find  `pwd`  -maxdepth 1 -type f -print
+ls -A1tr|awk -vpath=$PWD/ '{print path$1}'|tail
+
+
+find . -type f -name '*.diff'  -delete      
+find . -type f -name '*.a'  -exec rm -r {} \;
+find . -type f \( ! -iname "*.h" ! -iname "*.c" ! -iname "*.cpp" ! -iname "*.f" \) -printf '%s %p\n'| sort -nr | head -100 
+
+while (true); do sleep 10; clear; echo "# of Problems found: "  $(grep -i "MLINE AFTER" file*.log|grep -c BidDue); done
+
+for f in $(ls *.sav); do first=$(md5sum ${f%.sav}|cut -d" " -f1) ; second=$(md5sum ${f}|cut -d" " -f1); if [ ! "${first}" = "${second}" ]; then echo ${f} ${first} ${second}; else echo ${f} is fine; fi;  done
+
+for file in $(ls -a *.sh |grep -Ev '^[\.]' ); do ftype=$(file  "${file}"|cut -d" " -f 2); if [ "${ftype}" = "shell" ]; then printf "%-33s: %s %s\n" ${file} ${ftype}; grep  "send2web.css" ${file}; fi; done
+
+
+**********************************************
+ debugging:
+
+==========
+in tmux do a prefix+shift+p to start logging.
+gl tskmon|grep "VALUE 1"
+do a prefix+shift+p to stop logging
+in gnuplot do:
+set terminal dumb 230 40
+plot "tmux-prod-1-2-20150731T111621.log" using 0:4  with lines
+
+
+set xdata time
+set timefmt '%H:%M:%S'
+#set xrange ['10:00:00':'13:00:00']
+#est yrange [6000:20000]
+plot "~/tmux-PROD2-2-3-20160810T124228.log" using 1:2 with lines
+
+
+#Run tmuxifier from outside tmux:
+LD_LIBRARY_PATH=~/lib:/opt/swt/lib/ tmuxifier load-session PICK
