@@ -511,6 +511,35 @@ NORMAL="\e[0m"
 #BRIGHT=$(tput bold)
 BRIGHT="\e[1m"
 
+__set_git_status()
+{
+    local GIT_STATUS=0
+    if [[ $PWD =~ graveyard ]]
+    then
+        return
+    fi
+
+    if [[ ! $PWD =~ asadough && -d .git ]] || git rev-parse --git-dir > /dev/null 2>&1
+    then
+        #  staged     modified     untracked
+        #    0           0            0          0  clean
+        #    0           0            1          1  untracked
+        #    0           1            0          2  modified
+        #    0           1            1          3  modified+untracked
+        #    1           0            0          4  staged
+        #    1           0            1          5  staged+untracked
+        #    1           1            0          6  staged+modified
+        #    1           1            1          7  staged+modified+untracked
+        #GIT_STATUS=0
+        #Modified
+        git diff --quiet >/dev/null 2>&1 || GIT_STATUS=$((GIT_STATUS + 2)) #SLOW
+        #Staged
+        git diff --staged --quiet >/dev/null 2>&1 || GIT_STATUS=$((GIT_STATUS + 4))
+        #Untracked
+        git ls-files --others --exclude-standard --directory --no-empty-directory --error-unmatch -- ':/*' >/dev/null 2>&1 && GIT_STATUS=$((GIT_STATUS + 1))
+        echo  $GIT_STATUS
+    fi
+}
 
 __load_git_status_fast()
 {
@@ -623,9 +652,14 @@ print_git_branch(){
     #printf "%s" ${BRANCH}
     echo ${BRANCH}
 }
+# This function is called from a subshell in $PS1,
+# to provide a colourised visual indicator of the exit status of the last run command
 
 set_bash_prompt(){
-trap 'GIT_STATUS=$(__set_git_status) ' DEBUG
+EXIT_CODE=$?
+#trap 'GIT_STATUS=$(__set_git_status) ' DEBUG
+GIT_STATUS=$(__set_git_status)
+#echo $EXIT_CODE
 #trap 'PREVIOUS_COMMAND=$THIS_COMMAND; THIS_COMMAND=$BASH_COMMAND; GIT_STATUS=$(__set_git_status) ' DEBUG
 #read -r -d '' PROMPT_COMMAND << 'END'
 #        if [ $? = 0 -o $? == 130 -o "$PREVIOUS_COMMAND" = ": noop" ]; then
@@ -670,13 +704,23 @@ trap 'GIT_STATUS=$(__set_git_status) ' DEBUG
             PS1+=""
             ;;
     esac
-        PS1+="\[${RED}\]\[${BRIGHT}\] $ \[${WHITE}\]"
-        #PS1+=${PS1TAIL}
+
+    #if [ $? = 0 -o $? == 130 -o "$PREVIOUS_COMMAND" = ": noop" ]; then
+    if   [ "${EXIT_CODE}" -eq 0   ]; then # GREEN: All is OK
+        PS1+="\[${GREEN}\]"
+    elif [ "${EXIT_CODE}" -eq 127 ]; then # RED: Command not found
+        PS1+="\[${RED}\]"
+    elif [ "${EXIT_CODE}" -eq 130 ]; then # WHITE: Script terminated by Control-C
+        PS1+="\[${WHITE}\]"
+    else                             # ORANGE: Some other error happened
+        PS1+="\[${ORANGE}\]"
+    fi
+
+    PS1+="\[${BRIGHT}\] $ \[${WHITE}\]"
 
 }
 
-PROMPT_COMMAND=set_bash_prompt
-
+PROMPT_COMMAND="set_bash_prompt"
 #trap 'PREVIOUS_COMMAND=$THIS_COMMAND; THIS_COMMAND=$BASH_COMMAND' DEBUG
 #read -r -d '' PROMPT_COMMAND << 'END'
 #    if [ $? = 0 -o $? == 130 -o "$PREVIOUS_COMMAND" = ": noop" ]; then
@@ -688,8 +732,8 @@ PROMPT_COMMAND=set_bash_prompt
 #    fi
 #    : noop
 #END
-shopt -s checkwinsize
 
+shopt -s checkwinsize
 
 
 
