@@ -670,11 +670,15 @@ GIT_STATUS=$(__set_git_status)
 #        : noop
 #END
     #echo "ST###" ${GIT_STATUS}
-    if [[ $ARCH = Linux* ]]; then
-        PS1="\[${PURPLE}\]\[${BRIGHT}\]\h\[${NORMAL}\]:\[${BLUE}\]\[${BRIGHT}\]\w"
-    else
-        PS1="\[${GREEN}\]\[${BRIGHT}\]\h\[${NORMAL}\]:\[${BLUE}\]\[${BRIGHT}\]\w"
-    fi
+   if [[ $ARCH = Linux* ]]; then                                                                                
+            PS1="\[${PURPLE}\]\[${BRIGHT}\]\u\[${NORMAL}\]:\[${BLUE}\]\[${BRIGHT}\]\w"                           
+    else                                                                                                         
+        if [ -z ${VIRTUAL_ENV+x} ]; then                                                                         
+            PS1="\[${GREEN}\]\[${BRIGHT}\]\u\[${NORMAL}\]:\[${BLUE}\]\[${BRIGHT}\]\w"                            
+        else                                                                                                     
+            PS1="\[${PURPLE}\][!!VIR ENV!!] \[${NORMAL}\]\[${BLUE}\]\[${BRIGHT}\]\W"                             
+        fi                                                                                                       
+    fi       
     case "${GIT_STATUS}" in
         "0")
             PS1+="\[${LIGHT_PURPLE}\][\[${GREEN}\]\$(print_git_branch)\[${LIGHT_PURPLE}\]]"
