@@ -676,7 +676,9 @@ GIT_STATUS=$(__set_git_status)
         if [ -z ${VIRTUAL_ENV+x} ]; then                                                                         
             PS1="\[${GREEN}\]\[${BRIGHT}\]\u\[${NORMAL}\]:\[${BLUE}\]\[${BRIGHT}\]\w"                            
         else                                                                                                     
-            PS1="\[${PURPLE}\][!!VIR ENV!!] \[${NORMAL}\]\[${BLUE}\]\[${BRIGHT}\]\W"                             
+            virt_name=$(basename ${VIRTUAL_ENV})
+            PS1="\[${PURPLE}\][!! ${virt_name} !!] \[${NORMAL}\]\[${BLUE}\]\[${BRIGHT}\]\W"    
+                       
         fi                                                                                                       
     fi       
     case "${GIT_STATUS}" in
