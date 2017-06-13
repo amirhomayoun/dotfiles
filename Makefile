@@ -51,32 +51,32 @@ realclean: remove clean
 	    cd test/; $(MAKE) clean; $(REALCLEAN)
 
 tail:
-ifdef ERROR
+ifndef L
+	$(eval SRCH :=\<$(ERROR)\>\|\<$(WARN)\>\|\<$(INFO)\>\|\<$(DEBUG)\>\|\<$(TRACE)\>)
+else
+ifeq ($(L),ERROR)
 	$(eval SRCH :=\<$(ERROR)\>)
 else
-ifdef WARN
+ifeq ($(L),WARN)
 	$(eval SRCH :=\<$(WARN)\>)
 else
-ifdef INFO
+ifeq ($(L),INFO)
 	$(eval SRCH :=\<$(INFO)\>)
 else
-ifdef DEBUG
+ifeq ($(L),DEBUG)
 	$(eval SRCH :=\<$(DEBUG)\>)
 else
-ifdef TRACE
+ifeq ($(L),TRACE)
 	$(eval SRCH :=\<$(TRACE)\>)
 else
-ifdef WARN+
+ifeq ($(L),WARN+)
 	$(eval SRCH :=\<$(ERROR)\>\|\<$(WARN)\>)
 else
-ifdef INFO+
+ifeq ($(L),INFO+)
 	$(eval SRCH :=\<$(ERROR)\>\|\<$(WARN)\>\|\<$(INFO)\>)
 else
-ifdef DEBUG+
-	$(eval SRCH :=\<$(RROR)\>\|\<$(WARN)\>\|\<$(INFO)\>\|\<$(DEBUG)\>)
-else
-ifdef TRACE+
-	$(eval SRCH :=\<$(ERROR)\>\|\<$(WARN)\>\|\<$(INFO)\>\|\<$(DEBUG)\>\|\<$(TRACE)\>)
+ifeq ($(L),DEBUG+)
+	$(eval SRCH :=\<$(ERROR)\>\|\<$(WARN)\>\|\<$(INFO)\>\|\<$(DEBUG)\>)
 else
 	$(eval SRCH :=\<$(ERROR)\>\|\<$(WARN)\>\|\<$(INFO)\>\|\<$(DEBUG)\>\|\<$(TRACE)\>)
 endif
@@ -88,8 +88,9 @@ endif
 endif
 endif
 endif
-		cd logs; tail -f $(SVC).log.$(YEAR) |grep '$(UPPER_SVC)\|$(UPPER_SHARED)' | GREP_COLORS='ms=01;36:mc=01;31:sl=:cx=:fn=35:ln=32:bn=32:se=32' grep -i --color=always '${SRCH}'| GREP_COLORS='ms=01;32' grep --color=always -P "(\w*)(\.[cphf]*\:[0-9]*)"
-		#cd logs; tail -f $(SVC).log.$(YEAR) | GREP_COLORS='ms=01;36:mc=01;31:sl=:cx=:fn=35:ln=32:bn=32:se=36' grep -i --color=always '${SRCH}'| GREP_COLORS='ms=01;32' grep --color=always -P "(\w*)(\.[cphf]*\:[0-9]*)"
+
+	    cd logs; tail -f $(SVC).log.$(YEAR) |stdbuf -i0 -o0 -e0 grep --line-buffer $(UPPER_SVC) | GREP_COLORS='ms=01;36:mc=01;31:sl=:cx=:fn=35:ln=32:bn=32:se=36' stdbuf -i0 -o0 -e0 grep -i --line-buffer --color=always '${SRCH}'| GREP_COLORS='ms=01;33' grep --color=always -P "(\w*)(\.[cphf]*\:[0-9]*)"
+	    #cd logs; tail -f $(SVC).log.$(YEAR) | GREP_COLORS='ms=01;36:mc=01;31:sl=:cx=:fn=35:ln=32:bn=32:se=36' grep -i --color=always '${SRCH}'| GREP_COLORS='ms=01;32' grep --color=always -P "(\w*)(\.[cphf]*\:[0-9]*)"
 	    #cd logs/; tail -f $(SVC).log.2015 #Haha, this will break in about 6 months
 	    #cd logs/; tail -f $(SVC).log.$(YEAR) | grep -i --color=always '$(UPPER_SVC)\|$(UPPER_SHARED))' #Haha, this will break in about 6 months
 
