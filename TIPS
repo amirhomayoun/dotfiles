@@ -51,6 +51,12 @@ git filter-branch --tree-filter 'if [ -f old ]; then mkdir dir && mv old dir/new
 # To create a patch out of a file's history to apply to another project
 git log --pretty=email --patch-with-stat --reverse -- path/to/file_or_folder | (cd /path/to/new_repository && git am)
 
+# To remove all directories TESTDIR
+git filter-branch --subdirectory-filter TESTDIR -- --all
+# To remove all files by TESTFILE
+git filter-branch -f --prune-empty --index-filter 'git rm --cached --ignore-unmatch $(git ls-files | grep -v 'TESTFILE')'
+
+
 **********************SVN*****************************
 git svn init -s URL
 git svn fetch
